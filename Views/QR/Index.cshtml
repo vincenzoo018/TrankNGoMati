@@ -1,0 +1,140 @@
+@{
+    ViewData["Title"] = "QR Code Tracking";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-left">
+        <h1 class="page-title">QR Code Tracking</h1>
+        <p class="page-subtitle">Generate and scan QR codes for document status verification</p>
+    </div>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+    <!-- Generate QR -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-header-title">Generate QR Code</span>
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label class="form-label form-label-required">Reference Number</label>
+                <div style="display:flex;gap:8px;">
+                    <input type="text" class="form-control" id="qrRefInput" placeholder="e.g. TNG-2026-0001" value="TNG-2026-0001" />
+                    <button class="btn btn-primary" onclick="generateQR()">
+                        <i data-lucide="qr-code"></i> Generate
+                    </button>
+                </div>
+            </div>
+
+            <div class="qr-display" id="qrDisplay">
+                <div class="qr-image" id="qrImageContainer">
+                    <!-- QR Code SVG placeholder -->
+                    <svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="180" height="180" fill="#fff"/>
+                        <!-- Simplified QR pattern -->
+                        <rect x="10" y="10" width="50" height="50" rx="4" fill="#1A56DB"/>
+                        <rect x="18" y="18" width="34" height="34" rx="2" fill="#fff"/>
+                        <rect x="24" y="24" width="22" height="22" rx="1" fill="#1A56DB"/>
+                        <rect x="120" y="10" width="50" height="50" rx="4" fill="#1A56DB"/>
+                        <rect x="128" y="18" width="34" height="34" rx="2" fill="#fff"/>
+                        <rect x="134" y="24" width="22" height="22" rx="1" fill="#1A56DB"/>
+                        <rect x="10" y="120" width="50" height="50" rx="4" fill="#1A56DB"/>
+                        <rect x="18" y="128" width="34" height="34" rx="2" fill="#fff"/>
+                        <rect x="24" y="134" width="22" height="22" rx="1" fill="#1A56DB"/>
+                        <!-- Data pattern -->
+                        <rect x="70" y="10" width="8" height="8" fill="#1A56DB"/><rect x="86" y="10" width="8" height="8" fill="#1A56DB"/>
+                        <rect x="70" y="26" width="8" height="8" fill="#1A56DB"/><rect x="102" y="26" width="8" height="8" fill="#1A56DB"/>
+                        <rect x="78" y="42" width="8" height="8" fill="#1A56DB"/><rect x="94" y="42" width="8" height="8" fill="#1A56DB"/>
+                        <rect x="70" y="70" width="8" height="8" fill="#1A56DB"/><rect x="86" y="70" width="8" height="8" fill="#1A56DB"/>
+                        <rect x="102" y="70" width="8" height="8" fill="#1A56DB"/><rect x="70" y="86" width="8" height="8" fill="#1A56DB"/>
+                        <rect x="94" y="86" width="8" height="8" fill="#1A56DB"/><rect x="110" y="86" width="8" height="8" fill="#1A56DB"/>
+                        <rect x="78" y="102" width="8" height="8" fill="#1A56DB"/><rect x="110" y="102" width="8" height="8" fill="#1A56DB"/>
+                        <rect x="70" y="110" width="8" height="8" fill="#1A56DB"/><rect x="86" y="110" width="8" height="8" fill="#1A56DB"/>
+                        <rect x="120" y="70" width="8" height="8" fill="#1A56DB"/><rect x="136" y="78" width="8" height="8" fill="#1A56DB"/>
+                        <rect x="152" y="86" width="8" height="8" fill="#1A56DB"/><rect x="120" y="102" width="8" height="8" fill="#1A56DB"/>
+                        <rect x="136" y="110" width="8" height="8" fill="#1A56DB"/><rect x="152" y="120" width="8" height="8" fill="#1A56DB"/>
+                        <rect x="120" y="136" width="8" height="8" fill="#1A56DB"/><rect x="136" y="152" width="8" height="8" fill="#1A56DB"/>
+                        <rect x="152" y="136" width="8" height="8" fill="#1A56DB"/><rect x="70" y="136" width="8" height="8" fill="#1A56DB"/>
+                        <rect x="86" y="152" width="8" height="8" fill="#1A56DB"/><rect x="102" y="136" width="8" height="8" fill="#1A56DB"/>
+                    </svg>
+                </div>
+                <p style="margin-top:12px;font-size:var(--fs-body);font-weight:var(--fw-semibold);color:var(--brand);" id="qrRefDisplay">TNG-2026-0001</p>
+                <p class="text-meta">Scan this QR code to view document status</p>
+                <div style="margin-top:12px; display:flex; justify-content:center; gap:8px;">
+                    <button class="btn btn-secondary btn-sm" onclick="showToast('QR code downloaded','success')">
+                        <i data-lucide="download"></i> Download
+                    </button>
+                    <button class="btn btn-secondary btn-sm" onclick="printPage()">
+                        <i data-lucide="printer"></i> Print
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scan QR -->
+    <div class="card">
+        <div class="card-header">
+            <span class="card-header-title">Scan QR Code</span>
+        </div>
+        <div class="card-body">
+            <div style="text-align:center; padding:40px 20px;">
+                <div style="width:200px; height:200px; margin:0 auto; border:2px dashed var(--border); border-radius:var(--radius-card); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;">
+                    <i data-lucide="camera" style="width:48px;height:48px;color:var(--ink-muted);"></i>
+                    <span class="text-meta">Camera preview area</span>
+                </div>
+                <p class="text-meta" style="margin-top:16px;">Point your camera at a TrackNGo QR code to view document details</p>
+                <button class="btn btn-primary" style="margin-top:16px;" onclick="showToast('Camera access would be requested in production','success')">
+                    <i data-lucide="camera"></i> Start Scanning
+                </button>
+            </div>
+
+            <div style="border-top:1px solid var(--border); padding-top:20px; margin-top:20px;">
+                <p class="text-caption" style="margin-bottom:8px;">Or enter reference number manually</p>
+                <div style="display:flex;gap:8px;">
+                    <input type="text" class="form-control" id="manualRefInput" placeholder="TNG-2026-XXXX" />
+                    <a href="/Documents/Details/TNG-2026-0001" class="btn btn-secondary" id="lookupBtn">
+                        <i data-lucide="search"></i> Lookup
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent QR Activity -->
+<div class="card" style="margin-top:24px;">
+    <div class="card-header">
+        <span class="card-header-title">Recent QR Activity</span>
+    </div>
+    <div class="table-wrapper" style="border:none;border-radius:0;">
+        <table>
+            <thead>
+                <tr><th>Ref No</th><th>Action</th><th>Scanned By</th><th>Time</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>TNG-2026-0001</td><td>Generated</td><td>Records Clerk</td><td>Jun 15, 2026 — 9:14 AM</td></tr>
+                <tr><td>TNG-2026-0002</td><td>Scanned</td><td>Client</td><td>Jun 18, 2026 — 2:30 PM</td></tr>
+                <tr><td>TNG-2026-0005</td><td>Generated</td><td>Records Clerk</td><td>Jun 25, 2026 — 10:05 AM</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function generateQR() {
+    var ref = document.getElementById('qrRefInput').value;
+    if (ref) {
+        document.getElementById('qrRefDisplay').textContent = ref;
+        showToast('QR code generated for ' + ref, 'success');
+    }
+}
+
+document.getElementById('manualRefInput')?.addEventListener('input', function() {
+    var btn = document.getElementById('lookupBtn');
+    if (btn) btn.href = '/Documents/Details/' + this.value;
+});
+</script>
+}

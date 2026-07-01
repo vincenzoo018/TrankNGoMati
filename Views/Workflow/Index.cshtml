@@ -1,0 +1,157 @@
+@{
+    ViewData["Title"] = "Workflow";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-left">
+        <h1 class="page-title">Workflow</h1>
+        <p class="page-subtitle">FSM-Based Document Lifecycle Management — Finite State Machine visualization</p>
+    </div>
+</div>
+
+<!-- FSM Pipeline Visualization -->
+<div class="card" style="margin-bottom:24px;">
+    <div class="card-header">
+        <span class="card-header-title">Document Lifecycle Pipeline</span>
+        <span class="text-meta">Finite State Machine (FSM) Model</span>
+    </div>
+    <div class="card-body">
+        <div class="fsm-pipeline">
+            <div class="fsm-state">
+                <div class="fsm-state-box done">
+                    <i data-lucide="upload" style="width:16px;height:16px;display:inline;vertical-align:middle;margin-right:4px;"></i>
+                    Submitted
+                </div>
+            </div>
+            <div class="fsm-arrow done"><i data-lucide="arrow-right"></i></div>
+            <div class="fsm-state">
+                <div class="fsm-state-box done">
+                    <i data-lucide="stamp" style="width:16px;height:16px;display:inline;vertical-align:middle;margin-right:4px;"></i>
+                    Endorsed
+                </div>
+            </div>
+            <div class="fsm-arrow done"><i data-lucide="arrow-right"></i></div>
+            <div class="fsm-state">
+                <div class="fsm-state-box active">
+                    <i data-lucide="check-square" style="width:16px;height:16px;display:inline;vertical-align:middle;margin-right:4px;"></i>
+                    Accepted
+                </div>
+            </div>
+            <div class="fsm-arrow"><i data-lucide="arrow-right"></i></div>
+            <div class="fsm-state">
+                <div class="fsm-state-box">
+                    <i data-lucide="search" style="width:16px;height:16px;display:inline;vertical-align:middle;margin-right:4px;"></i>
+                    Reviewed
+                </div>
+            </div>
+            <div class="fsm-arrow"><i data-lucide="arrow-right"></i></div>
+            <div class="fsm-state">
+                <div class="fsm-state-box">
+                    <i data-lucide="badge-check" style="width:16px;height:16px;display:inline;vertical-align:middle;margin-right:4px;"></i>
+                    Approved
+                </div>
+            </div>
+            <div class="fsm-arrow"><i data-lucide="arrow-right"></i></div>
+            <div class="fsm-state">
+                <div class="fsm-state-box">
+                    <i data-lucide="circle-check" style="width:16px;height:16px;display:inline;vertical-align:middle;margin-right:4px;"></i>
+                    Completed
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Transition Actions -->
+<div class="card" style="margin-bottom:24px;">
+    <div class="card-header">
+        <span class="card-header-title">Available Transitions</span>
+    </div>
+    <div class="card-body">
+        <p class="text-meta" style="margin-bottom:16px;">The FSM restricts documents from making invalid transitions. Only the following actions are available based on the current state:</p>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:12px;">
+            <div class="card" style="box-shadow:none;">
+                <div class="card-body" style="text-align:center;">
+                    <i data-lucide="arrow-right" style="width:24px;height:24px;color:var(--brand);margin-bottom:8px;"></i>
+                    <h2 class="h2">Forward</h2>
+                    <p class="text-meta">Route to next office or department</p>
+                </div>
+            </div>
+            <div class="card" style="box-shadow:none;">
+                <div class="card-body" style="text-align:center;">
+                    <i data-lucide="check" style="width:24px;height:24px;color:var(--brand);margin-bottom:8px;"></i>
+                    <h2 class="h2">Approve</h2>
+                    <p class="text-meta">Approve and advance to next step</p>
+                </div>
+            </div>
+            <div class="card" style="box-shadow:none;">
+                <div class="card-body" style="text-align:center;">
+                    <i data-lucide="undo-2" style="width:24px;height:24px;color:var(--destructive);margin-bottom:8px;"></i>
+                    <h2 class="h2">Return</h2>
+                    <p class="text-meta">Return with remarks for revision</p>
+                </div>
+            </div>
+            <div class="card" style="box-shadow:none;">
+                <div class="card-body" style="text-align:center;">
+                    <i data-lucide="x-circle" style="width:24px;height:24px;color:var(--destructive);margin-bottom:8px;"></i>
+                    <h2 class="h2">Reject</h2>
+                    <p class="text-meta">Reject document permanently</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Documents in Workflow -->
+<div class="card">
+    <div class="card-header">
+        <span class="card-header-title">Documents Currently in Workflow</span>
+    </div>
+    <div class="table-wrapper" style="border:none;border-radius:0;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ref No</th>
+                    <th>Title</th>
+                    <th>Current Step</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="/Documents/Details/TNG-2026-0001">TNG-2026-0001</a></td>
+                    <td>Research Incentive — Dr. Santos</td>
+                    <td>Step 3 — Accepted</td>
+                    <td><span class="badge badge-in-progress">In Progress</span></td>
+                    <td>City Administrator</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="showToast('Document forwarded to Step 4','success')"><i data-lucide="arrow-right"></i> Forward</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><a href="/Documents/Details/TNG-2026-0003">TNG-2026-0003</a></td>
+                    <td>Leave Application — Juan Dela Cruz</td>
+                    <td>Step 1 — Submitted</td>
+                    <td><span class="badge badge-pending">Pending</span></td>
+                    <td>Records Office</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="showToast('Document endorsed to Step 2','success')"><i data-lucide="arrow-right"></i> Forward</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><a href="/Documents/Details/TNG-2026-0005">TNG-2026-0005</a></td>
+                    <td>Purchase Request — Office Supplies</td>
+                    <td>Step 4 — Reviewed</td>
+                    <td><span class="badge badge-in-progress">In Progress</span></td>
+                    <td>Budget Office</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="showToast('Document approved — Step 5','success')"><i data-lucide="check"></i> Approve</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

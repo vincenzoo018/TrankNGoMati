@@ -1,0 +1,237 @@
+@{
+    ViewData["Title"] = "Documents";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-left">
+        <h1 class="page-title">Documents</h1>
+        <p class="page-subtitle">Manage and track all documents in the system</p>
+    </div>
+    <div class="page-header-right">
+        <button class="btn btn-secondary" onclick="openModal('exportModal')">
+            <i data-lucide="download"></i> Export
+        </button>
+        <a href="/Documents/Create" class="btn btn-primary">
+            <i data-lucide="plus"></i> New Document
+        </a>
+    </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+    <div class="search-input">
+        <i data-lucide="search"></i>
+        <input type="text" id="tableSearch" placeholder="Search documents by reference, title, or department..." />
+    </div>
+    <select class="filter-select" id="statusFilter" onchange="filterBySelect('statusFilter','.table-wrapper table', 5)">
+        <option value="">All Statuses</option>
+        <option value="completed">Completed</option>
+        <option value="in progress">In Progress</option>
+        <option value="pending">Pending</option>
+        <option value="returned">Returned</option>
+    </select>
+    <select class="filter-select" id="typeFilter">
+        <option value="">All Types</option>
+        <option>Research Incentive</option>
+        <option>Travel Order</option>
+        <option>Leave Application</option>
+        <option>Memorandum</option>
+        <option>Purchase Request</option>
+        <option>Certificate</option>
+        <option>Special Order</option>
+        <option>Administrative Order</option>
+        <option>Memo Circular</option>
+    </select>
+    <select class="filter-select" id="artaFilter">
+        <option value="">All ARTA</option>
+        <option value="on track">On Track</option>
+        <option value="due soon">Due Soon</option>
+        <option value="overdue">Overdue</option>
+        <option value="completed">Completed</option>
+    </select>
+</div>
+
+<!-- Documents Table -->
+<div class="card">
+    <div class="table-wrapper" style="border:none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ref No</th>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Department</th>
+                    <th>Date Filed</th>
+                    <th>Status</th>
+                    <th>ARTA Tier</th>
+                    <th>ARTA Status</th>
+                    <th>Step</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="/Documents/Details/TNG-2026-0001">TNG-2026-0001</a></td>
+                    <td>Research Incentive Application — Dr. Santos</td>
+                    <td>Research Incentive</td>
+                    <td>HRMO</td>
+                    <td>Jun 15, 2026</td>
+                    <td><span class="badge badge-in-progress">In Progress</span></td>
+                    <td>Simple (3 days)</td>
+                    <td><span class="badge badge-on-track">On Track</span></td>
+                    <td>3 / 6</td>
+                    <td class="table-actions">
+                        <a href="/Documents/Details/TNG-2026-0001" class="btn btn-ghost btn-icon btn-sm" title="View"><i data-lucide="eye"></i></a>
+                        <button class="btn btn-ghost btn-icon btn-sm" title="Edit" onclick="showToast('Edit functionality coming in Phase 2','success')"><i data-lucide="pencil"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><a href="/Documents/Details/TNG-2026-0002">TNG-2026-0002</a></td>
+                    <td>Travel Order — Mayor's Office Staff</td>
+                    <td>Travel Order</td>
+                    <td>Mayor's Office</td>
+                    <td>Jun 18, 2026</td>
+                    <td><span class="badge badge-completed">Completed</span></td>
+                    <td>Simple (3 days)</td>
+                    <td><span class="badge badge-completed">Completed</span></td>
+                    <td>6 / 6</td>
+                    <td class="table-actions">
+                        <a href="/Documents/Details/TNG-2026-0002" class="btn btn-ghost btn-icon btn-sm" title="View"><i data-lucide="eye"></i></a>
+                        <button class="btn btn-ghost btn-icon btn-sm" title="Edit" onclick="showToast('Edit functionality coming in Phase 2','success')"><i data-lucide="pencil"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><a href="/Documents/Details/TNG-2026-0003">TNG-2026-0003</a></td>
+                    <td>Leave Application — Juan Dela Cruz</td>
+                    <td>Leave Application</td>
+                    <td>CDRRMO</td>
+                    <td>Jun 20, 2026</td>
+                    <td><span class="badge badge-pending">Pending</span></td>
+                    <td>Simple (3 days)</td>
+                    <td><span class="badge badge-warning">Due Soon</span></td>
+                    <td>1 / 6</td>
+                    <td class="table-actions">
+                        <a href="/Documents/Details/TNG-2026-0003" class="btn btn-ghost btn-icon btn-sm" title="View"><i data-lucide="eye"></i></a>
+                        <button class="btn btn-ghost btn-icon btn-sm" title="Edit" onclick="showToast('Edit functionality coming in Phase 2','success')"><i data-lucide="pencil"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><a href="/Documents/Details/TNG-2026-0004">TNG-2026-0004</a></td>
+                    <td>Memorandum — Budget Allocation Q3</td>
+                    <td>Memorandum</td>
+                    <td>Budget Office</td>
+                    <td>Jun 1, 2026</td>
+                    <td><span class="badge badge-returned">Returned</span></td>
+                    <td>Complex (7 days)</td>
+                    <td><span class="badge badge-overdue">Overdue</span></td>
+                    <td>2 / 6</td>
+                    <td class="table-actions">
+                        <a href="/Documents/Details/TNG-2026-0004" class="btn btn-ghost btn-icon btn-sm" title="View"><i data-lucide="eye"></i></a>
+                        <button class="btn btn-ghost btn-icon btn-sm" title="Edit" onclick="showToast('Edit functionality coming in Phase 2','success')"><i data-lucide="pencil"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><a href="/Documents/Details/TNG-2026-0005">TNG-2026-0005</a></td>
+                    <td>Purchase Request — Office Supplies</td>
+                    <td>Purchase Request</td>
+                    <td>GSO</td>
+                    <td>Jun 25, 2026</td>
+                    <td><span class="badge badge-in-progress">In Progress</span></td>
+                    <td>Simple (3 days)</td>
+                    <td><span class="badge badge-on-track">On Track</span></td>
+                    <td>4 / 6</td>
+                    <td class="table-actions">
+                        <a href="/Documents/Details/TNG-2026-0005" class="btn btn-ghost btn-icon btn-sm" title="View"><i data-lucide="eye"></i></a>
+                        <button class="btn btn-ghost btn-icon btn-sm" title="Edit" onclick="showToast('Edit functionality coming in Phase 2','success')"><i data-lucide="pencil"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><a href="/Documents/Details/TNG-2026-0006">TNG-2026-0006</a></td>
+                    <td>Certificate of Indigency — Maria Garcia</td>
+                    <td>Certificate</td>
+                    <td>Social Welfare</td>
+                    <td>Jun 26, 2026</td>
+                    <td><span class="badge badge-completed">Completed</span></td>
+                    <td>Simple (3 days)</td>
+                    <td><span class="badge badge-completed">Completed</span></td>
+                    <td>6 / 6</td>
+                    <td class="table-actions">
+                        <a href="/Documents/Details/TNG-2026-0006" class="btn btn-ghost btn-icon btn-sm" title="View"><i data-lucide="eye"></i></a>
+                        <button class="btn btn-ghost btn-icon btn-sm" title="Edit" onclick="showToast('Edit functionality coming in Phase 2','success')"><i data-lucide="pencil"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><a href="/Documents/Details/TNG-2026-0007">TNG-2026-0007</a></td>
+                    <td>Special Order — Committee Formation</td>
+                    <td>Special Order</td>
+                    <td>Mayor's Office</td>
+                    <td>Jun 27, 2026</td>
+                    <td><span class="badge badge-in-progress">In Progress</span></td>
+                    <td>Complex (7 days)</td>
+                    <td><span class="badge badge-on-track">On Track</span></td>
+                    <td>2 / 6</td>
+                    <td class="table-actions">
+                        <a href="/Documents/Details/TNG-2026-0007" class="btn btn-ghost btn-icon btn-sm" title="View"><i data-lucide="eye"></i></a>
+                        <button class="btn btn-ghost btn-icon btn-sm" title="Edit" onclick="showToast('Edit functionality coming in Phase 2','success')"><i data-lucide="pencil"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><a href="/Documents/Details/TNG-2026-0008">TNG-2026-0008</a></td>
+                    <td>Administrative Order — Office Reorganization</td>
+                    <td>Administrative Order</td>
+                    <td>Admin Division</td>
+                    <td>Jun 28, 2026</td>
+                    <td><span class="badge badge-pending">Pending</span></td>
+                    <td>Highly Technical (20 days)</td>
+                    <td><span class="badge badge-on-track">On Track</span></td>
+                    <td>1 / 7</td>
+                    <td class="table-actions">
+                        <a href="/Documents/Details/TNG-2026-0008" class="btn btn-ghost btn-icon btn-sm" title="View"><i data-lucide="eye"></i></a>
+                        <button class="btn btn-ghost btn-icon btn-sm" title="Edit" onclick="showToast('Edit functionality coming in Phase 2','success')"><i data-lucide="pencil"></i></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer" style="display:flex; align-items:center; justify-content:space-between;">
+        <span class="text-meta">Showing 8 of 247 documents</span>
+        <div class="pagination">
+            <button class="pagination-btn">&laquo;</button>
+            <button class="pagination-btn active">1</button>
+            <button class="pagination-btn">2</button>
+            <button class="pagination-btn">3</button>
+            <button class="pagination-btn">...</button>
+            <button class="pagination-btn">31</button>
+            <button class="pagination-btn">&raquo;</button>
+        </div>
+    </div>
+</div>
+
+<!-- Password-Gated Export Modal -->
+<div class="modal-overlay" id="exportModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                <i data-lucide="lock" style="width:18px;height:18px;display:inline;vertical-align:middle;margin-right:6px;"></i>
+                Password-Gated Export
+            </h3>
+            <button class="modal-close" onclick="closeModal('exportModal')"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body">
+            <p style="margin-bottom:16px;" class="text-meta">
+                Enter the secondary export password to authorize data extraction. This action will be logged in the audit trail.
+            </p>
+            <div class="form-group">
+                <label class="form-label form-label-required">Export Password</label>
+                <input type="password" class="form-control" id="exportPasswordInput" placeholder="Enter export password" />
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('exportModal')">Cancel</button>
+            <button class="btn btn-primary" onclick="handleExportPassword('exportPasswordInput','exportModal')">
+                <i data-lucide="download"></i> Authorize Export
+            </button>
+        </div>
+    </div>
+</div>

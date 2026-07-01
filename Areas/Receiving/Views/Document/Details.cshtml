@@ -1,0 +1,345 @@
+@{
+    ViewData["Title"] = "Document Details";
+    var refNo = ViewBag.RefNo as string ?? "TNG-2026-0001";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-header-left">
+        <h1 class="page-title">@refNo</h1>
+        <p class="page-subtitle">Research Incentive Application — Dr. Santos</p>
+    </div>
+    <div class="page-header-right">
+        <a href="/Documents" class="btn btn-secondary">
+            <i data-lucide="arrow-left"></i> Back
+        </a>
+        <button class="btn btn-secondary" onclick="printPage()">
+            <i data-lucide="printer"></i> Print
+        </button>
+        <button class="btn btn-secondary" onclick="openModal('exportDetailModal')">
+            <i data-lucide="download"></i> Export
+        </button>
+        <button class="btn btn-primary" onclick="openModal('approveModal')">
+            <i data-lucide="check"></i> Approve
+        </button>
+        <button class="btn btn-danger" onclick="openModal('returnModal')">
+            <i data-lucide="undo-2"></i> Return
+        </button>
+    </div>
+</div>
+
+<!-- Stepper -->
+<div class="stepper">
+    <div class="stepper-step">
+        <div class="stepper-node">
+            <div class="stepper-circle completed">1</div>
+            <span class="stepper-label">Submitted</span>
+        </div>
+    </div>
+    <div class="stepper-line completed"></div>
+    <div class="stepper-step">
+        <div class="stepper-node">
+            <div class="stepper-circle completed">2</div>
+            <span class="stepper-label">Endorsed</span>
+        </div>
+    </div>
+    <div class="stepper-line completed"></div>
+    <div class="stepper-step">
+        <div class="stepper-node">
+            <div class="stepper-circle current">3</div>
+            <span class="stepper-label">Accepted</span>
+        </div>
+    </div>
+    <div class="stepper-line"></div>
+    <div class="stepper-step">
+        <div class="stepper-node">
+            <div class="stepper-circle">4</div>
+            <span class="stepper-label">Reviewed</span>
+        </div>
+    </div>
+    <div class="stepper-line"></div>
+    <div class="stepper-step">
+        <div class="stepper-node">
+            <div class="stepper-circle">5</div>
+            <span class="stepper-label">Approved</span>
+        </div>
+    </div>
+    <div class="stepper-line"></div>
+    <div class="stepper-step">
+        <div class="stepper-node">
+            <div class="stepper-circle">6</div>
+            <span class="stepper-label">Completed</span>
+        </div>
+    </div>
+</div>
+
+<!-- Two-Column Detail Layout -->
+<div class="detail-layout">
+    <!-- LEFT: Document Info + Routing Slip -->
+    <div>
+        <!-- Document Details Card -->
+        <div class="card" style="margin-bottom:20px;">
+            <div class="card-header">
+                <span class="card-header-title">Document Information</span>
+                <span class="badge badge-in-progress">In Progress</span>
+            </div>
+            <div class="card-body">
+                <div class="routing-slip-grid">
+                    <div class="routing-slip-field">
+                        <label>Reference No</label>
+                        <span>@refNo</span>
+                    </div>
+                    <div class="routing-slip-field">
+                        <label>Document Type</label>
+                        <span>Research Incentive</span>
+                    </div>
+                    <div class="routing-slip-field">
+                        <label>Department</label>
+                        <span>HRMO</span>
+                    </div>
+                    <div class="routing-slip-field">
+                        <label>Date Filed</label>
+                        <span>June 15, 2026</span>
+                    </div>
+                    <div class="routing-slip-field">
+                        <label>Submitted By</label>
+                        <span>Maria Santos</span>
+                    </div>
+                    <div class="routing-slip-field">
+                        <label>ARTA Tier</label>
+                        <span>Simple — 3 working days</span>
+                    </div>
+                    <div class="routing-slip-field">
+                        <label>Current Step</label>
+                        <span>Step 3 of 6 — Accepted</span>
+                    </div>
+                    <div class="routing-slip-field">
+                        <label>ARTA Status</label>
+                        <span class="badge badge-on-track">On Track</span>
+                    </div>
+                </div>
+
+                <!-- Attachments -->
+                <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border);">
+                    <h2 class="h2" style="margin-bottom:10px;">Attachments</h2>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <div style="display:flex; align-items:center; gap:6px; padding:6px 12px; border:1px solid var(--border); border-radius:var(--radius-btn); font-size:var(--fs-body);">
+                            <i data-lucide="file" style="width:14px;height:14px;color:var(--brand);"></i>
+                            <span>research_application.pdf</span>
+                            <span class="text-meta">(245 KB)</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:6px; padding:6px 12px; border:1px solid var(--border); border-radius:var(--radius-btn); font-size:var(--fs-body);">
+                            <i data-lucide="file" style="width:14px;height:14px;color:var(--brand);"></i>
+                            <span>supporting_docs.pdf</span>
+                            <span class="text-meta">(128 KB)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Routing Slip -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-header-title">Routing Slip</span>
+                <button class="btn btn-ghost btn-sm" onclick="printPage()">
+                    <i data-lucide="printer"></i> Print Slip
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="routing-slip">
+                    <div class="routing-slip-header">
+                        <div class="routing-slip-title">ROUTING SLIP</div>
+                        <div class="routing-slip-sub">Office of the Mayor — City of Mati, Davao Oriental</div>
+                    </div>
+                    <div class="routing-slip-grid">
+                        <div class="routing-slip-field">
+                            <label>Tracking No</label>
+                            <span>@refNo</span>
+                        </div>
+                        <div class="routing-slip-field">
+                            <label>Date</label>
+                            <span>June 15, 2026</span>
+                        </div>
+                        <div class="routing-slip-field">
+                            <label>Classification</label>
+                            <span>Research Incentive</span>
+                        </div>
+                        <div class="routing-slip-field">
+                            <label>Received By</label>
+                            <span>Clerk — Records Office</span>
+                        </div>
+                        <div class="routing-slip-field">
+                            <label>Forward To</label>
+                            <span>HRMO</span>
+                        </div>
+                        <div class="routing-slip-field">
+                            <label>Received At</label>
+                            <span>Jun 15, 2026 — 9:14 AM</span>
+                        </div>
+                    </div>
+
+                    <div class="routing-slip-instructions">
+                        <h3>Instructions</h3>
+                        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                            <label class="form-check"><input type="checkbox" checked disabled /> For Review</label>
+                            <label class="form-check"><input type="checkbox" checked disabled /> For Approval</label>
+                            <label class="form-check"><input type="checkbox" checked disabled /> For Signature</label>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:12px;">
+                        <label style="font-size:var(--fs-meta);font-weight:600;color:var(--ink-muted);text-transform:uppercase;">Remarks</label>
+                        <p style="margin-top:4px;">Please review and process research incentive application per CMO guidelines.</p>
+                    </div>
+
+                    <div class="routing-slip-signatories">
+                        <div class="signatory-block">
+                            <div class="signatory-line">
+                                <div class="signatory-name">Dr. Ana Reyes</div>
+                                <div class="signatory-role">Reviewer</div>
+                            </div>
+                        </div>
+                        <div class="signatory-block">
+                            <div class="signatory-line">
+                                <div class="signatory-name">Atty. Carlos Mendoza</div>
+                                <div class="signatory-role">Approver</div>
+                            </div>
+                        </div>
+                        <div class="signatory-block">
+                            <div class="signatory-line">
+                                <div class="signatory-name">Hon. Mayor</div>
+                                <div class="signatory-role">Supervisor</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT: Document Tracer Panel -->
+    <div class="tracer-panel">
+        <div class="tracer-header">
+            <i data-lucide="activity" style="width:16px;height:16px;display:inline;vertical-align:middle;margin-right:6px;"></i>
+            Document Tracer
+        </div>
+        <div class="tracer-entry">
+            <div class="tracer-avatar brand">RC</div>
+            <div class="tracer-content">
+                <div class="tracer-title">Document Submitted</div>
+                <div class="tracer-message">Document registered and tracking number assigned.</div>
+                <div class="tracer-time">Jun 15, 2026 — 9:14 AM</div>
+            </div>
+        </div>
+        <div class="tracer-entry">
+            <div class="tracer-avatar brand">RC</div>
+            <div class="tracer-content">
+                <div class="tracer-title">QR Code Generated</div>
+                <div class="tracer-message">QR code created for document tracking.</div>
+                <div class="tracer-time">Jun 15, 2026 — 9:14 AM</div>
+            </div>
+        </div>
+        <div class="tracer-entry">
+            <div class="tracer-avatar brand">SM</div>
+            <div class="tracer-content">
+                <div class="tracer-title">SMS Notification Sent</div>
+                <div class="tracer-message">Status update sent to Maria Santos (09171234567).</div>
+                <div class="tracer-time">Jun 15, 2026 — 9:15 AM</div>
+            </div>
+        </div>
+        <div class="tracer-entry">
+            <div class="tracer-avatar brand">DH</div>
+            <div class="tracer-content">
+                <div class="tracer-title">Endorsed by Dept. Head</div>
+                <div class="tracer-message">Document endorsed for processing by Dr. Ana Reyes — HRMO.</div>
+                <div class="tracer-time">Jun 16, 2026 — 10:30 AM</div>
+            </div>
+        </div>
+        <div class="tracer-entry">
+            <div class="tracer-avatar brand">FW</div>
+            <div class="tracer-content">
+                <div class="tracer-title">Forwarded to City Admin</div>
+                <div class="tracer-message">Document forwarded to City Administrator's Office for review.</div>
+                <div class="tracer-time">Jun 16, 2026 — 2:45 PM</div>
+            </div>
+        </div>
+        <div class="tracer-entry">
+            <div class="tracer-avatar brand">CA</div>
+            <div class="tracer-content">
+                <div class="tracer-title">Accepted by City Admin</div>
+                <div class="tracer-message">Document accepted by Atty. Carlos Mendoza. Pending review.</div>
+                <div class="tracer-time">Jun 17, 2026 — 8:20 AM</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Approve Confirmation Modal -->
+<div class="modal-overlay" id="approveModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Approve Document</h3>
+            <button class="modal-close" onclick="closeModal('approveModal')"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to approve <strong>@refNo</strong>?</p>
+            <p class="text-meta" style="margin-top:8px;">This will advance the document to the next workflow step and notify relevant parties via SMS.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('approveModal')">Cancel</button>
+            <button class="btn btn-primary" onclick="closeModal('approveModal'); showToast('Document approved and advanced to Step 4 — Reviewed','success');">
+                <i data-lucide="check"></i> Confirm Approve
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Return with Remarks Modal -->
+<div class="modal-overlay" id="returnModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Return Document</h3>
+            <button class="modal-close" onclick="closeModal('returnModal')"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body">
+            <p>Return <strong>@refNo</strong> with remarks:</p>
+            <div class="form-group" style="margin-top:12px;">
+                <label class="form-label form-label-required">Return Remarks</label>
+                <textarea class="form-control" rows="4" placeholder="Explain why this document is being returned..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('returnModal')">Cancel</button>
+            <button class="btn btn-danger" onclick="closeModal('returnModal'); showToast('Document returned with remarks. SMS notification sent.','error');">
+                <i data-lucide="undo-2"></i> Confirm Return
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Password-Gated Export Modal -->
+<div class="modal-overlay" id="exportDetailModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                <i data-lucide="lock" style="width:18px;height:18px;display:inline;vertical-align:middle;margin-right:6px;"></i>
+                Password-Gated Export
+            </h3>
+            <button class="modal-close" onclick="closeModal('exportDetailModal')"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body">
+            <p style="margin-bottom:16px;" class="text-meta">Enter the secondary export password to authorize data extraction.</p>
+            <div class="form-group">
+                <label class="form-label form-label-required">Export Password</label>
+                <input type="password" class="form-control" id="exportDetailPwd" placeholder="Enter export password" />
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('exportDetailModal')">Cancel</button>
+            <button class="btn btn-primary" onclick="handleExportPassword('exportDetailPwd','exportDetailModal')">
+                <i data-lucide="download"></i> Authorize Export
+            </button>
+        </div>
+    </div>
+</div>

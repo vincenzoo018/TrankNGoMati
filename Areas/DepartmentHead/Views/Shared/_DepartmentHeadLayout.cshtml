@@ -1,0 +1,61 @@
+@{
+    var currentPage = ViewBag.CurrentPage as string ?? "Dashboard";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — TrackNGo Mati (Dept Head)</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/departmenthead.css" />
+</head>
+<body>
+    <header class="topbar">
+        <button class="topbar-btn" onclick="toggleSidebar()" title="Menu" style="margin-right:auto;"><i data-lucide="menu"></i></button>
+        <a href="/" class="topbar-btn" title="Logout"><i data-lucide="log-out"></i></a>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="sidebar-logo-icon">D</div>
+            <div class="sidebar-logo-text">
+                <span class="sidebar-logo-title">Department Head</span>
+                <span class="sidebar-logo-sub">TrackNGo Mati</span>
+            </div>
+        </div>
+        
+        <div class="sidebar-nav">
+            <a href="/DepartmentHead/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+            <a href="/DepartmentHead/Document" class="sidebar-nav-item @(currentPage == "Document" ? "active" : "")">
+                <i data-lucide="file-text"></i> Documents
+            </a>
+            <a href="/DepartmentHead/Workflow" class="sidebar-nav-item @(currentPage == "Workflow" ? "active" : "")">
+                <i data-lucide="git-branch"></i> Workflow
+            </a>
+            <a href="/DepartmentHead/Signature" class="sidebar-nav-item @(currentPage == "Signature" ? "active" : "")">
+                <i data-lucide="pen-tool"></i> Signatures
+            </a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        @RenderBody()
+    </main>
+
+    <div id="toast-container" class="toast-container"></div>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="~/js/site.js"></script>
+    <script src="~/js/departmenthead.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

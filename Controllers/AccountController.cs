@@ -13,8 +13,17 @@ namespace TrackNGoMati.Controllers
         [HttpPost]
         public IActionResult Login(string email, string password, string role)
         {
-            // Front-end only: redirect to dashboard with role
-            return RedirectToAction("Index", "Dashboard", new { role = role ?? "System Administrator" });
+            string targetArea = role switch
+            {
+                "Mayor" => "Mayor",
+                "ExecutiveAdmin" => "Admin",
+                "RecordsOfficer" => "Receiving",
+                "DepartmentHead" => "DepartmentHead",
+                "ComplianceOfficer" => "Cart",
+                _ => "Admin"
+            };
+
+            return RedirectToAction("Index", "Dashboard", new { area = targetArea });
         }
     }
 }

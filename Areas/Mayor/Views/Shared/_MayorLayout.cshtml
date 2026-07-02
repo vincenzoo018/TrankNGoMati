@@ -1,5 +1,6 @@
 @{
     var currentPage = ViewBag.CurrentPage as string ?? "Dashboard";
+    var departments = ViewBag.SidebarDepartments as IEnumerable<TrackNGoMati.Models.Department>;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -33,15 +34,30 @@
         </div>
         <div class="sidebar-role" id="current-role-label">Mayor</div>
         
-                <div class="sidebar-nav">
-            <a href="/Mayor/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")"><i data-lucide="layout-dashboard"></i> Executive Dashboard</a>
-            <a href="/Mayor/Document" class="sidebar-nav-item @(currentPage == "Document" ? "active" : "")"><i data-lucide="file-check"></i> Pending Approvals</a>
-            <a href="/Mayor/Escalations" class="sidebar-nav-item @(currentPage == "Escalations" ? "active" : "")"><i data-lucide="alert-triangle"></i> Escalated Cases</a>
+        <div class="sidebar-nav">
+            <a href="/Mayor/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+            <a href="/Mayor/Document" class="sidebar-nav-item @(currentPage == "Document" ? "active" : "")"><i data-lucide="file-check"></i> My Documents</a>
             <a href="/Mayor/Signature" class="sidebar-nav-item @(currentPage == "Signature" ? "active" : "")"><i data-lucide="pen-tool"></i> Signatures</a>
-            <a href="/Mayor/Archive" class="sidebar-nav-item @(currentPage == "Archive" ? "active" : "")"><i data-lucide="archive"></i> Archive</a>
-            <a href="/Mayor/Reports" class="sidebar-nav-item @(currentPage == "Reports" ? "active" : "")"><i data-lucide="bar-chart-2"></i> Reports</a>
+            <a href="/Mayor/Archive" class="sidebar-nav-item @(currentPage == "Archive" ? "active" : "")"><i data-lucide="archive"></i> Archived</a>
         </div>
-<div style="margin-top: auto; padding: 24px; padding-bottom: 32px;">
+
+        @if (departments != null && departments.Any())
+        {
+            <div style="padding: 0 24px; margin-top: 16px;">
+                <div style="font-size: 10px; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Departments</div>
+            </div>
+            <div class="sidebar-nav" style="padding-top: 0;">
+                @foreach (var dept in departments)
+                {
+                    <a href="/Mayor/Document?department=@dept.Id" class="sidebar-nav-item" style="font-size: 13px;">
+                        <span style="display:inline-block; width:8px; height:8px; border-radius:2px; background:var(--brand); margin-right:8px; flex-shrink:0;"></span>
+                        @dept.DepartmentName
+                    </a>
+                }
+            </div>
+        }
+
+        <div style="margin-top: auto; padding: 24px; padding-bottom: 32px;">
             <a href="/Account/Logout" class="btn btn-secondary" style="width: 100%; border-color: var(--border); color: #EF4444; justify-content: center;">
                 <i data-lucide="log-out"></i> Sign Out
             </a>

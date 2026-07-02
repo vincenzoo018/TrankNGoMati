@@ -1,103 +1,60 @@
+@model IEnumerable<TrackNGoMati.Models.AuditTrailEntry>
 @{
-    ViewData["Title"] = "System Audit Trail";
+    ViewData["Title"] = "Audit Trail";
 }
 
-<div class="page-header animate-fade-in">
+<div class="page-header animate-fade-in" style="margin-bottom: 24px;">
     <div class="page-header-left">
-        <h1 class="page-title">System Audit Trail</h1>
-        <p class="page-subtitle">Immutable log of all user activities and document transactions</p>
-    </div>
-    <div class="page-header-right">
-        <button class="btn btn-secondary" onclick="openModal('exportAuditModal')"><i data-lucide="download"></i> Export Logs</button>
+        <h1 class="page-title">Audit Trail</h1>
+        <p class="page-subtitle">Comprehensive tracking of all system activities</p>
     </div>
 </div>
 
-<div class="filter-bar animate-fade-in">
-    <div class="search-input">
-        <i data-lucide="search"></i>
-        <input type="text" placeholder="Search logs..." />
+<div class="card animate-fade-in" style="border-radius: 8px;">
+    <div style="padding: 16px; border-bottom: 1px solid var(--border);">
+        <div class="search-input" style="width: 100%;">
+            <i data-lucide="search"></i>
+            <input type="text" placeholder="Search audit trail..." style="padding-left: 36px; height: 40px;" />
+        </div>
     </div>
-    <select class="filter-select">
-        <option value="">All Users</option>
-        <option>Admin User</option>
-        <option>Juan Dela Cruz</option>
-        <option>Maria Santos</option>
-    </select>
-    <select class="filter-select">
-        <option value="">All Actions</option>
-        <option>Registered Doc</option>
-        <option>Endorsed</option>
-        <option>Signed</option>
-        <option>Escalated</option>
-    </select>
-</div>
-
-<div class="card animate-fade-in">
+    
     <div class="table-wrapper" style="border:none;">
         <table>
             <thead>
-                <tr><th>Timestamp</th><th>User</th><th>Role</th><th>Action</th><th>Target Reference</th><th>IP Address</th></tr>
+                <tr>
+                    <th style="padding-left: 20px;">TIMESTAMP</th>
+                    <th>USER</th>
+                    <th>DOCUMENT REF</th>
+                    <th>ACTION</th>
+                    <th>DETAILS</th>
+                    <th>IP ADDRESS</th>
+                </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    <td>Receiving Clerk</td>
-                    <td>Records Officer</td>
-                    <td><span class="badge badge-pending">Registered Doc</span></td>
-                    <td><a href="#">TNG-2026-0899</a></td>
-                    <td>192.168.1.100</td>
-                </tr>
-                <tr>
-                    <td>@DateTime.Now.AddMinutes(-45).ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    <td>Atty. Carlos Mendoza</td>
-                    <td>Mayor</td>
-                    <td><span class="badge badge-completed">Digital Signature</span></td>
-                    <td><a href="#">TNG-2026-0888</a></td>
-                    <td>192.168.1.105</td>
-                </tr>
-                <tr>
-                    <td>@DateTime.Now.AddHours(-2).ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    <td>CART Officer</td>
-                    <td>Compliance Officer</td>
-                    <td><span class="badge badge-returned">Manual Escalation</span></td>
-                    <td><a href="#">TNG-2026-0004</a></td>
-                    <td>192.168.1.110</td>
-                </tr>
-                <tr>
-                    <td>@DateTime.Now.AddHours(-5).ToString("yyyy-MM-dd HH:mm:ss")</td>
-                    <td>Admin User</td>
-                    <td>Executive Admin</td>
-                    <td><span class="badge badge-in-progress">Updated Dept</span></td>
-                    <td>HRMO</td>
-                    <td>192.168.1.50</td>
-                </tr>
+                @foreach (var entry in Model)
+                {
+                    <tr>
+                        <td style="padding-left: 20px;">@entry.Timestamp.ToString("MMM dd, yyyy HH:mm:ss")</td>
+                        <td style="font-weight:500; color:var(--ink);">@(entry.User?.FullName ?? "System")</td>
+                        <td>
+                            @if(entry.Document != null) {
+                                <a href="#" style="color:var(--brand);">@entry.Document.TrackingNumber</a>
+                            } else {
+                                <span style="color:var(--ink-muted);">-</span>
+                            }
+                        </td>
+                        <td>
+                            <span style="display:inline-block; padding:2px 8px; border-radius:4px; background:#F1F5F9; font-size:12px; font-weight:600; color:var(--ink);">@entry.Action</span>
+                        </td>
+                        <td>@entry.Details</td>
+                        <td style="font-family:monospace; font-size:12px; color:var(--ink-muted);">@entry.Ipaddress</td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6" style="text-align:center; padding:40px; color:var(--ink-muted);">No audit entries found.</td></tr>
+                }
             </tbody>
         </table>
-    </div>
-</div>
-
-<!-- Password-Gated Export Modal -->
-<div class="modal-overlay" id="exportAuditModal">
-    <div class="modal animate-fade-in">
-        <div class="modal-header">
-            <h3 class="modal-title">
-                <i data-lucide="lock" style="width:18px;height:18px;display:inline;vertical-align:middle;margin-right:6px;"></i>
-                Password-Gated Export
-            </h3>
-            <button class="modal-close" onclick="closeModal('exportAuditModal')"><i data-lucide="x"></i></button>
-        </div>
-        <div class="modal-body">
-            <p style="margin-bottom:16px;" class="text-meta">Enter the secondary export password to authorize data extraction.</p>
-            <div class="form-group">
-                <label class="form-label form-label-required">Export Password</label>
-                <input type="password" class="form-control" id="exportAuditPwd" placeholder="Enter export password" />
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeModal('exportAuditModal')">Cancel</button>
-            <button class="btn btn-primary" onclick="var pwd = document.getElementById('exportAuditPwd').value; if(pwd==='password123'){ closeModal('exportAuditModal'); showToast('Audit Logs Exported Successfully', 'success'); } else { showToast('Incorrect Password', 'error'); }">
-                <i data-lucide="download"></i> Authorize Export
-            </button>
-        </div>
     </div>
 </div>

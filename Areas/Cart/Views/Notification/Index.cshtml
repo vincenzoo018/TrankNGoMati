@@ -1,66 +1,64 @@
+@model IEnumerable<TrackNGoMati.Models.Smsnotification>
 @{
-    ViewData["Title"] = "SMS Notifications";
+    ViewData["Title"] = "Notifications";
 }
 
-<div class="page-header animate-fade-in">
+<div class="page-header animate-fade-in" style="margin-bottom: 24px;">
     <div class="page-header-left">
-        <h1 class="page-title">SMS Notifications Gateway</h1>
-        <p class="page-subtitle">Monitor automated SMS alerts sent to clients and stakeholders for status updates and ARTA delays</p>
-    </div>
-    <div class="page-header-right">
-        <button class="btn btn-primary" onclick="sendSmsReminder()"><i data-lucide="send"></i> Dispatch Manual Reminder</button>
+        <h1 class="page-title">SMS Notifications</h1>
+        <p class="page-subtitle">Track sent automated alerts to clients and officials</p>
     </div>
 </div>
 
-<div class="card animate-fade-in">
-    <div class="card-header"><span class="card-header-title">Recent Dispatches (SMS_Notifications Table)</span></div>
+<div class="card animate-fade-in" style="border-radius: 8px;">
+    <div style="padding: 16px; border-bottom: 1px solid var(--border);">
+        <div class="search-input" style="width: 100%;">
+            <i data-lucide="search"></i>
+            <input type="text" placeholder="Search notifications..." style="padding-left: 36px; height: 40px;" />
+        </div>
+    </div>
+    
     <div class="table-wrapper" style="border:none;">
         <table>
             <thead>
-                <tr><th>Date Sent</th><th>Recipient Number</th><th>Linked Document</th><th>Message Preview</th><th>Status</th></tr>
+                <tr>
+                    <th style="padding-left: 20px;">RECIPIENT</th>
+                    <th>NUMBER</th>
+                    <th>DOCUMENT REF</th>
+                    <th>EVENT</th>
+                    <th>MESSAGE</th>
+                    <th>STATUS</th>
+                    <th>QUEUED AT</th>
+                </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Just now</td>
-                    <td style="font-family:monospace;">0918-765-4321</td>
-                    <td><a href="#">TNG-2026-0899</a></td>
-                    <td style="max-width: 300px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-                        TrackNGo: Your Travel Order is now Approved. Pick up at Mayor's Office.
-                    </td>
-                    <td><span class="badge badge-completed">Delivered</span></td>
-                </tr>
-                <tr class="alert-row">
-                    <td>1 hour ago</td>
-                    <td style="font-family:monospace;">0917-123-4567</td>
-                    <td><a href="#">TNG-2026-0004</a></td>
-                    <td style="max-width: 300px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-                        ARTA ALERT: Document TNG-2026-0004 has exceeded 20 days. Auto-escalated to Mayor.
-                    </td>
-                    <td><span class="badge badge-completed">Delivered</span></td>
-                </tr>
-                <tr>
-                    <td>2 hours ago</td>
-                    <td style="font-family:monospace;">0919-345-6789</td>
-                    <td><a href="#">TNG-2026-0095</a></td>
-                    <td style="max-width: 300px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
-                        TrackNGo: Your Purchase Request has been returned for corrections.
-                    </td>
-                    <td><span class="badge badge-pending">Pending</span></td>
-                </tr>
+                @foreach (var n in Model)
+                {
+                    <tr>
+                        <td style="padding-left: 20px; font-weight:600; color:var(--ink);">@n.RecipientName</td>
+                        <td>@n.RecipientNumber</td>
+                        <td><a href="#" style="color:var(--brand);">@n.Document?.TrackingNumber</a></td>
+                        <td>
+                            <span class="badge" style="background:#E0E7FF; color:#3730A3; border:none;">@n.TriggerEvent</span>
+                        </td>
+                        <td style="max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="@n.MessageContent">@n.MessageContent</td>
+                        <td>
+                            @if(n.Status == 1) {
+                                <span class="badge badge-completed">Delivered</span>
+                            } else if (n.Status == 2) {
+                                <span class="badge badge-returned">Failed</span>
+                            } else {
+                                <span class="badge badge-pending">Queued</span>
+                            }
+                        </td>
+                        <td>@n.QueuedAt.ToString("MMM dd, yyyy HH:mm")</td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" style="text-align:center; padding:40px; color:var(--ink-muted);">No notifications sent yet.</td></tr>
+                }
             </tbody>
         </table>
-    </div>
-</div>
-
-<div class="card animate-fade-in" style="margin-top: 24px;">
-    <div class="card-header"><span class="card-header-title">Gateway Connection Log</span></div>
-    <div class="card-body">
-        <div class="sms-log-box">
-            <p>> Gateway connection established: OK</p>
-            <p>> Syncing with SMS Provider API...</p>
-            <p>> Batch 1204 dispatched successfully at @DateTime.Now.ToString("HH:mm:ss")</p>
-            <p>> Pinging status callbacks...</p>
-            <p>> Awaiting further events.</p>
-        </div>
     </div>
 </div>

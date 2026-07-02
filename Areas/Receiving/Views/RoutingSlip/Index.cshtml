@@ -1,60 +1,60 @@
+@model IEnumerable<TrackNGoMati.Models.RoutingSlip>
 @{
-    ViewData["Title"] = "Routing Slip";
+    ViewData["Title"] = "Routing Slips";
 }
 
-<div class="page-header animate-fade-in">
+<div class="page-header animate-fade-in" style="margin-bottom: 24px;">
     <div class="page-header-left">
-        <h1 class="page-title">Generate Routing Slip</h1>
-        <p class="page-subtitle">Print physical routing slips to attach to original documents</p>
-    </div>
-    <div class="page-header-right">
-        <button class="btn btn-primary" onclick="printRoutingSlip()"><i data-lucide="printer"></i> Print Slip</button>
+        <h1 class="page-title">Routing Slips</h1>
+        <p class="page-subtitle">Track the physical transfer of documents between departments</p>
     </div>
 </div>
 
-<div class="routing-slip-preview animate-fade-in" style="max-width: 800px; margin: 0 auto;">
-    <div style="text-align: center; margin-bottom: 24px; border-bottom: 2px solid var(--ink); padding-bottom: 16px;">
-        <h2 style="font-size: 18px; text-transform: uppercase;">City Government of Mati</h2>
-        <h1 style="font-size: 24px; font-weight: 700; margin: 8px 0;">DOCUMENT ROUTING SLIP</h1>
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:24px;">
-            <div style="text-align:left;">
-                <p><strong>Tracking No:</strong> <span style="font-size:20px; color:var(--brand);">TNG-2026-0899</span></p>
-                <p><strong>Date Received:</strong> @DateTime.Now.ToString("MMMM dd, yyyy")</p>
-            </div>
-            <div>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=TNG-2026-0899" alt="QR" />
-            </div>
+<div class="card animate-fade-in" style="border-radius: 8px;">
+    <div style="padding: 16px; border-bottom: 1px solid var(--border);">
+        <div class="search-input" style="width: 100%;">
+            <i data-lucide="search"></i>
+            <input type="text" placeholder="Search routing slips..." style="padding-left: 36px; height: 40px;" />
         </div>
     </div>
-
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
-        <tr>
-            <td style="border: 1px solid var(--border); padding: 12px; width: 30%;"><strong>Sender:</strong></td>
-            <td style="border: 1px solid var(--border); padding: 12px;">Juan Dela Cruz</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid var(--border); padding: 12px;"><strong>Document Title:</strong></td>
-            <td style="border: 1px solid var(--border); padding: 12px;">Travel Order for Manila Conference</td>
-        </tr>
-        <tr>
-            <td style="border: 1px solid var(--border); padding: 12px;"><strong>Target Dept:</strong></td>
-            <td style="border: 1px solid var(--border); padding: 12px;">Mayor's Office</td>
-        </tr>
-    </table>
-
-    <h3 style="font-size: 16px; margin-bottom: 8px;">Action / Instructions</h3>
-    <div style="min-height: 150px; border: 1px solid var(--border); padding: 12px; margin-bottom: 24px;">
-        <p style="color:var(--text-muted); font-style:italic;">(Leave blank for physical annotations by Department Heads)</p>
-    </div>
-
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-        <div style="border-top: 1px solid var(--ink); text-align: center; padding-top: 8px; margin-top: 40px;">
-            <p><strong>Receiving Clerk Signature</strong></p>
-            <p style="font-size: 12px; color: var(--text-muted);">Received By: Records Officer</p>
-        </div>
-        <div style="border-top: 1px solid var(--ink); text-align: center; padding-top: 8px; margin-top: 40px;">
-            <p><strong>Authorized By</strong></p>
-            <p style="font-size: 12px; color: var(--text-muted);">Department Head / Mayor</p>
-        </div>
+    
+    <div class="table-wrapper" style="border:none;">
+        <table>
+            <thead>
+                <tr>
+                    <th style="padding-left: 20px;">SLIP NO.</th>
+                    <th>DOCUMENT REF</th>
+                    <th>RECEIVED BY</th>
+                    <th>SENDER</th>
+                    <th>TARGET DEPT</th>
+                    <th>STATUS</th>
+                    <th>DATE RECEIVED</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var slip in Model)
+                {
+                    <tr>
+                        <td style="padding-left: 20px; font-weight:600; color:var(--ink);">@slip.TrackingNumber</td>
+                        <td><a href="/Receiving/Document/Details/@slip.Document?.TrackingNumber" style="color:var(--brand); text-decoration:underline;">@slip.Document?.TrackingNumber</a></td>
+                        <td>@slip.ReceivedByUser?.FullName</td>
+                        <td>@slip.SenderName</td>
+                        <td>@slip.TargetDepartment?.DepartmentName</td>
+                        <td>
+                            @if(slip.SlipStatus == "Completed") {
+                                <span class="badge badge-completed">@slip.SlipStatus</span>
+                            } else {
+                                <span class="badge badge-pending">@slip.SlipStatus</span>
+                            }
+                        </td>
+                        <td>@slip.DateReceived.ToString("MMM dd, yyyy HH:mm")</td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" style="text-align:center; padding:40px; color:var(--ink-muted);">No routing slips found.</td></tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>

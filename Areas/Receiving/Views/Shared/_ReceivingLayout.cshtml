@@ -1,5 +1,6 @@
 @{
     var currentPage = ViewBag.CurrentPage as string ?? "Dashboard";
+    var departments = ViewBag.SidebarDepartments as IEnumerable<TrackNGoMati.Models.Department>;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -33,13 +34,31 @@
         </div>
         <div class="sidebar-role" id="current-role-label">Records Officer</div>
         
-                <div class="sidebar-nav">
+        <div class="sidebar-nav">
             <a href="/Receiving/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")"><i data-lucide="layout-dashboard"></i> Dashboard</a>
-            <a href="/Receiving/Document" class="sidebar-nav-item @(currentPage == "Document" ? "active" : "")"><i data-lucide="file-plus"></i> Document Registration</a>
-            <a href="/Receiving/RoutingSlips" class="sidebar-nav-item @(currentPage == "RoutingSlips" ? "active" : "")"><i data-lucide="map"></i> Routing Slips</a>
-            <a href="/Receiving/Archive" class="sidebar-nav-item @(currentPage == "Archive" ? "active" : "")"><i data-lucide="archive"></i> Archive</a>
+            <a href="/Receiving/Document" class="sidebar-nav-item @(currentPage == "Document" ? "active" : "")"><i data-lucide="file-plus"></i> My Documents</a>
+            <a href="/Receiving/RoutingSlip" class="sidebar-nav-item @(currentPage == "RoutingSlip" ? "active" : "")"><i data-lucide="map"></i> Routing Slips</a>
+            <a href="/Receiving/AuditTrail" class="sidebar-nav-item @(currentPage == "AuditTrail" ? "active" : "")"><i data-lucide="activity"></i> Audit Trail</a>
+            <a href="/Receiving/Archive" class="sidebar-nav-item @(currentPage == "Archive" ? "active" : "")"><i data-lucide="archive"></i> Archived</a>
         </div>
-<div style="margin-top: auto; padding: 24px; padding-bottom: 32px;">
+
+        @if (departments != null && departments.Any())
+        {
+            <div style="padding: 0 24px; margin-top: 16px;">
+                <div style="font-size: 10px; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Departments</div>
+            </div>
+            <div class="sidebar-nav" style="padding-top: 0;">
+                @foreach (var dept in departments)
+                {
+                    <a href="/Receiving/Document?department=@dept.Id" class="sidebar-nav-item" style="font-size: 13px;">
+                        <span style="display:inline-block; width:8px; height:8px; border-radius:2px; background:var(--brand); margin-right:8px; flex-shrink:0;"></span>
+                        @dept.DepartmentName
+                    </a>
+                }
+            </div>
+        }
+
+        <div style="margin-top: auto; padding: 24px; padding-bottom: 32px;">
             <a href="/Account/Logout" class="btn btn-secondary" style="width: 100%; border-color: var(--border); color: #EF4444; justify-content: center;">
                 <i data-lucide="log-out"></i> Sign Out
             </a>

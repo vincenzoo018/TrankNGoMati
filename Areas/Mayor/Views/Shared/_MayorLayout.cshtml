@@ -17,21 +17,15 @@
 </head>
 <body>
     <header class="topbar">
-        <button class="topbar-btn" onclick="toggleSidebar()" title="Menu" style="margin-right:auto;">
-            <i data-lucide="menu"></i>
-        </button>
-        <button class="topbar-btn" title="Notifications">
-            <i data-lucide="bell"></i><span class="topbar-badge"></span>
-        </button>
+        <button class="topbar-btn" onclick="toggleSidebar()" title="Menu" style="margin-right:auto;"><i data-lucide="menu"></i></button>
+        <button class="topbar-btn" title="Notifications"><i data-lucide="bell"></i><span class="topbar-badge"></span></button>
         <span class="topbar-separator"></span>
-        <a href="/" class="topbar-btn" title="Logout">
-            <i data-lucide="log-out"></i>
-        </a>
+        <a href="/" class="topbar-btn" title="Logout"><i data-lucide="log-out"></i></a>
     </header>
 
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-logo">
-            <div class="sidebar-logo-icon">M</div>
+            <div class="sidebar-logo-icon" style="background:var(--brand)">M</div>
             <div class="sidebar-logo-text">
                 <span class="sidebar-logo-title">Office of the Mayor</span>
                 <span class="sidebar-logo-sub">TrackNGo Mati</span>
@@ -57,13 +51,11 @@
     </main>
 
     <div id="toast-container" class="toast-container"></div>
-
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="~/js/site.js"></script>
     <script src="~/js/mayor.js"></script>
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,2 +1,8 @@
-/* Department Head Role JavaScript */
-// Role specific functionality goes here
+// Department Head specific JS
+function endorseDocument() {
+    showToast('Document Endorsed & Forwarded', 'success');
+}
+
+function returnDocument() {
+    showToast('Document Returned for Corrections', 'error');
+}

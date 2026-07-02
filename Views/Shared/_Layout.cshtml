@@ -1,6 +1,23 @@
+@using TrackNGoMati.Services
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
 @{
-    var currentRole = ViewBag.CurrentRole as string ?? "System Administrator";
+    var session = HttpContextAccessor.HttpContext?.Session;
+    var currentRole = session?.GetInt32(SessionHelper.KEY_ROLE) ?? 0;
+    var currentFullName = session?.GetString(SessionHelper.KEY_FULL_NAME) ?? "Guest";
+    var currentDept = session?.GetString(SessionHelper.KEY_DEPT) ?? "";
     var currentPage = ViewBag.CurrentPage as string ?? "Dashboard";
+
+    string roleName = currentRole switch
+    {
+        SessionHelper.ROLE_ADMIN => "Executive Admin",
+        SessionHelper.ROLE_RECORDS => "Records Officer",
+        SessionHelper.ROLE_DEPT => "Department Head",
+        SessionHelper.ROLE_MAYOR => "Mayor",
+        SessionHelper.ROLE_CART => "CART Officer",
+        _ => "Guest"
+    };
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -21,29 +38,23 @@
 <body>
     <!-- ===== TOPBAR ===== -->
     <header class="topbar">
-        <button class="topbar-btn" onclick="toggleSidebar()" title="Menu" style="margin-right:auto;">
-            <i data-lucide="menu"></i>
-        </button>
-        <button class="topbar-btn" title="Notifications">
-            <i data-lucide="bell"></i>
-            <span class="topbar-badge"></span>
-        </button>
-        <button class="topbar-btn" title="Favorites">
-            <i data-lucide="star"></i>
-        </button>
-        <button class="topbar-btn" title="Flagged">
-            <i data-lucide="flag"></i>
-        </button>
-        <span class="topbar-separator"></span>
-        <button class="topbar-btn" title="Account">
-            <i data-lucide="user"></i>
-        </button>
-        <button class="topbar-btn" title="Settings">
-            <i data-lucide="settings"></i>
-        </button>
-        <a href="/" class="topbar-btn" title="Logout">
-            <i data-lucide="log-out"></i>
-        </a>
+        <div style="display:flex; align-items:center; gap: 16px;">
+            <a href="#" style="color:var(--white); text-decoration:none; font-size:12px;">Quick Links</a>
+            <span style="color:rgba(255,255,255,0.5);">·</span>
+            <a href="#" style="color:var(--white); text-decoration:none; font-size:12px;">Quality Assurance</a>
+            <span style="color:rgba(255,255,255,0.5);">·</span>
+            <a href="#" style="color:var(--white); text-decoration:none; font-size:12px;">Support</a>
+        </div>
+        <div style="margin-left:auto; display:flex; align-items:center; gap:12px;">
+            <button class="topbar-btn" title="Notifications"><i data-lucide="bell"></i></button>
+            <button class="topbar-btn" title="Favorites"><i data-lucide="star"></i></button>
+            <button class="topbar-btn" title="Bookmarks"><i data-lucide="flag"></i></button>
+            <button class="topbar-btn" title="Profile"><i data-lucide="user"></i></button>
+            <button class="topbar-btn" title="Settings"><i data-lucide="settings"></i></button>
+            <a href="/Account/Logout" class="topbar-btn" title="Logout">
+                <i data-lucide="log-out"></i>
+            </a>
+        </div>
     </header>
 
     <!-- ===== SIDEBAR ===== -->
@@ -56,137 +67,49 @@
             </div>
         </div>
 
-        <div class="sidebar-role" id="current-role-label">@currentRole</div>
+        <div class="sidebar-role" id="current-role-label">@roleName</div>
 
         <div class="sidebar-nav">
-            @* === SYSTEM ADMINISTRATOR NAV === *@
-            @if (currentRole == "System Administrator")
-            {
-                <a href="/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")">
-                    <i data-lucide="layout-dashboard"></i> Dashboard
-                </a>
-                <a href="/Documents" class="sidebar-nav-item @(currentPage == "Documents" ? "active" : "")">
-                    <i data-lucide="file-text"></i> Documents
-                </a>
-                <a href="/Workflow" class="sidebar-nav-item @(currentPage == "Workflow" ? "active" : "")">
-                    <i data-lucide="git-branch"></i> Workflow
-                </a>
-                <a href="/QR" class="sidebar-nav-item @(currentPage == "QR" ? "active" : "")">
-                    <i data-lucide="qr-code"></i> QR Code
-                </a>
-                <a href="/Signatures" class="sidebar-nav-item @(currentPage == "Signatures" ? "active" : "")">
-                    <i data-lucide="pen-tool"></i> Signatures
-                </a>
-                <a href="/SMS" class="sidebar-nav-item @(currentPage == "SMS" ? "active" : "")">
-                    <i data-lucide="message-square"></i> SMS
-                </a>
-                <a href="/Reports" class="sidebar-nav-item @(currentPage == "Reports" ? "active" : "")">
-                    <i data-lucide="bar-chart-3"></i> Reports
-                </a>
-
-                <div class="sidebar-section-label">Administration</div>
-                <a href="/Users" class="sidebar-nav-item @(currentPage == "Users" ? "active" : "")">
-                    <i data-lucide="users"></i> Users
-                </a>
-                <a href="/Departments" class="sidebar-nav-item @(currentPage == "Departments" ? "active" : "")">
-                    <i data-lucide="building-2"></i> Departments
-                </a>
-                <a href="/Escalation" class="sidebar-nav-item @(currentPage == "Escalation" ? "active" : "")">
-                    <i data-lucide="alert-triangle"></i> Escalation
-                </a>
-                <a href="/Audit" class="sidebar-nav-item @(currentPage == "Audit" ? "active" : "")">
-                    <i data-lucide="shield-check"></i> Audit Logs & Trails
-                </a>
-            }
-
-            @* === DEPARTMENT PERSONNEL NAV === *@
-            @if (currentRole == "Department Personnel")
-            {
-                <a href="/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")">
-                    <i data-lucide="layout-dashboard"></i> Dashboard
-                </a>
-                <a href="/Documents" class="sidebar-nav-item @(currentPage == "Documents" ? "active" : "")">
-                    <i data-lucide="file-text"></i> Documents
-                </a>
-                <a href="/QR" class="sidebar-nav-item @(currentPage == "QR" ? "active" : "")">
-                    <i data-lucide="qr-code"></i> QR Code
-                </a>
-                <a href="/SMS" class="sidebar-nav-item @(currentPage == "SMS" ? "active" : "")">
-                    <i data-lucide="message-square"></i> SMS
-                </a>
-            }
-
-            @* === DEPARTMENT HEAD NAV === *@
-            @if (currentRole == "Department Head")
-            {
-                <a href="/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")">
-                    <i data-lucide="layout-dashboard"></i> Dashboard
-                </a>
-                <a href="/Documents" class="sidebar-nav-item @(currentPage == "Documents" ? "active" : "")">
-                    <i data-lucide="file-text"></i> Documents
-                </a>
-                <a href="/Workflow" class="sidebar-nav-item @(currentPage == "Workflow" ? "active" : "")">
-                    <i data-lucide="git-branch"></i> Workflow
-                </a>
-                <a href="/Signatures" class="sidebar-nav-item @(currentPage == "Signatures" ? "active" : "")">
-                    <i data-lucide="pen-tool"></i> Signatures
-                </a>
-                <a href="/Escalation" class="sidebar-nav-item @(currentPage == "Escalation" ? "active" : "")">
-                    <i data-lucide="alert-triangle"></i> Escalation
-                </a>
-            }
-
-            @* === AUTHORIZED SIGNATORY NAV === *@
-            @if (currentRole == "Authorized Signatory")
-            {
-                <a href="/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")">
-                    <i data-lucide="layout-dashboard"></i> Dashboard
-                </a>
-                <a href="/Documents" class="sidebar-nav-item @(currentPage == "Documents" ? "active" : "")">
-                    <i data-lucide="file-text"></i> Documents
-                </a>
-                <a href="/Signatures" class="sidebar-nav-item @(currentPage == "Signatures" ? "active" : "")">
-                    <i data-lucide="pen-tool"></i> Signatures
-                </a>
-                <a href="/Audit" class="sidebar-nav-item @(currentPage == "Audit" ? "active" : "")">
-                    <i data-lucide="shield-check"></i> Audit Logs & Trails
-                </a>
-            }
-
-            @* === CLIENT NAV === *@
-            @if (currentRole == "Client")
-            {
-                <a href="/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")">
-                    <i data-lucide="layout-dashboard"></i> Dashboard
-                </a>
-                <a href="/Documents" class="sidebar-nav-item @(currentPage == "Documents" ? "active" : "")">
-                    <i data-lucide="file-text"></i> Documents
-                </a>
-                <a href="/QR" class="sidebar-nav-item @(currentPage == "QR" ? "active" : "")">
-                    <i data-lucide="qr-code"></i> QR Code
-                </a>
-            }
+            @{ var currentArea = ViewContext.RouteData.Values["area"]?.ToString() ?? "Admin"; }
+            
+            <a href="/@currentArea/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+            <a href="/Receiving/Document" class="sidebar-nav-item @(currentPage == "Document" ? "active" : "")">
+                <i data-lucide="file-text"></i> All Documents
+            </a>
+            <a href="/DepartmentHead/Workflow" class="sidebar-nav-item @(currentPage == "Workflow" ? "active" : "")">
+                <i data-lucide="git-branch"></i> Workflow Routing
+            </a>
+            <a href="#" class="sidebar-nav-item">
+                <i data-lucide="qr-code"></i> QR Tracking
+            </a>
+            <a href="/Mayor/Signature" class="sidebar-nav-item @(currentPage == "Signature" ? "active" : "")">
+                <i data-lucide="pen-tool"></i> Signatures & Audit
+            </a>
+            <a href="#" class="sidebar-nav-item">
+                <i data-lucide="message-square"></i> SMS Notifications
+            </a>
+            <a href="/Cart/Reports" class="sidebar-nav-item @(currentPage == "Reports" ? "active" : "")">
+                <i data-lucide="bar-chart-2"></i> Monitoring Reports
+            </a>
+            <a href="/Admin/UserManagement" class="sidebar-nav-item @(currentPage == "UserManagement" ? "active" : "")">
+                <i data-lucide="users"></i> User Management
+            </a>
+            <a href="/Admin/Departments" class="sidebar-nav-item @(currentPage == "Departments" ? "active" : "")">
+                <i data-lucide="building"></i> Departments
+            </a>
+            <a href="/Cart/ARTAEscalations" class="sidebar-nav-item @(currentPage == "ARTAEscalations" ? "active" : "")">
+                <i data-lucide="shield-alert"></i> ARTA Escalation
+            </a>
+            <a href="/Cart/AuditTrail" class="sidebar-nav-item @(currentPage == "AuditTrail" ? "active" : "")">
+                <i data-lucide="history"></i> Audit Logs & Trails
+            </a>
         </div>
 
-        <div class="sidebar-footer">
-            <!-- Role Switcher (Demo Only) -->
-            <div class="text-caption" style="margin-bottom:6px;">Switch Role (Demo)</div>
-            @{
-                var roles = new[] { "System Administrator", "Department Personnel", "Department Head", "Authorized Signatory", "Client" };
-            }
-            <select class="form-control" onchange="switchRole(this.value)" style="font-size:11px;" name="roleSwitcher">
-                @foreach (var r in roles)
-                {
-                    if (r == currentRole)
-                    {
-                        <option value="@r" selected="selected">@r</option>
-                    }
-                    else
-                    {
-                        <option value="@r">@r</option>
-                    }
-                }
-            </select>
+        <div class="sidebar-profile">
+            <div class="profile-name">@currentFullName</div>
+            <div class="profile-dept">@currentDept</div>
         </div>
     </nav>
 

@@ -25,30 +25,41 @@
 
     <!-- RIGHT: Login Form -->
     <div class="login-form-side">
-        <div class="login-card">
+        <div class="login-card animate-fade-in">
             <h2 class="login-card-title">Welcome Back</h2>
             <p class="login-card-sub">Sign in to your TrackNGo account</p>
 
+            @if (TempData["LoginError"] != null)
+            {
+                <div style="background:#FEF2F2; border:1px solid var(--destructive); border-radius:4px; padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                    <i data-lucide="alert-circle" style="width:16px;height:16px;color:var(--destructive);flex-shrink:0;"></i>
+                    <span style="font-size:var(--fs-body); color:var(--destructive);">@TempData["LoginError"]</span>
+                </div>
+            }
+
             <form action="/Account/Login" method="post">
                 <div class="form-group">
-                    <label class="form-label form-label-required">Email Address</label>
-                    <input type="email" class="form-control" name="email" placeholder="you@mati.gov.ph" required id="login-email" />
+                    <label class="form-label form-label-required">Email / Username</label>
+                    <div style="position:relative;">
+                        <i data-lucide="mail" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--ink-muted);"></i>
+                        <input type="text" class="form-control" name="username" id="login-username"
+                               placeholder="you@mati.gov.ph" required autocomplete="username"
+                               style="padding-left:34px;" />
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label form-label-required">Password</label>
-                    <input type="password" class="form-control" name="password" placeholder="Enter your password" required id="login-password" />
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label form-label-required">Sign In As</label>
-                    <select class="form-control" name="role" id="login-role">
-                        <option value="Mayor">Mayor</option>
-                        <option value="ExecutiveAdmin">Executive Admin</option>
-                        <option value="RecordsOfficer">Records Officer</option>
-                        <option value="DepartmentHead">Department Head</option>
-                        <option value="ComplianceOfficer">Compliance Officer (CART)</option>
-                    </select>
+                    <div style="position:relative;">
+                        <i data-lucide="lock" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--ink-muted);"></i>
+                        <input type="password" class="form-control" name="password" id="login-password"
+                               placeholder="Enter your password" required autocomplete="current-password"
+                               style="padding-left:34px; padding-right:40px;" />
+                        <button type="button" onclick="togglePwd()" tabindex="-1"
+                                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0;">
+                            <i data-lucide="eye" id="pwd-icon" style="width:15px;height:15px;color:var(--ink-muted);"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -58,14 +69,51 @@
                     </label>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:10px;" id="login-submit">
+                <button type="submit" class="btn btn-primary" id="login-submit"
+                        style="width:100%; justify-content:center; padding:10px;">
                     <i data-lucide="log-in"></i> Sign In
                 </button>
             </form>
 
-            <div style="margin-top:24px; text-align:center;">
+            <!-- Quick-Fill Demo Buttons -->
+            <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:16px;">
+                <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--ink-muted); font-weight:600; margin-bottom:8px;">
+                    Quick Demo Login
+                </p>
+                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                    <button onclick="fill('mayor@mati.gov.ph')"    class="btn btn-sm btn-secondary">Mayor</button>
+                    <button onclick="fill('admin@mati.gov.ph')"    class="btn btn-sm btn-secondary">Admin</button>
+                    <button onclick="fill('records@mati.gov.ph')"  class="btn btn-sm btn-secondary">Receiving</button>
+                    <button onclick="fill('hrmo.head@mati.gov.ph')" class="btn btn-sm btn-secondary">Dept Head</button>
+                    <button onclick="fill('cart@mati.gov.ph')"     class="btn btn-sm btn-secondary">CART</button>
+                </div>
+            </div>
+
+            <div style="margin-top:16px; text-align:center;">
                 <p class="text-meta">TrackNGo Mati v1.0 &middot; RA 11032 Compliant</p>
+                <p class="text-meta" style="margin-top: 4px;">Demo Password: <strong>password123</strong></p>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function fill(email) {
+            document.getElementById('login-username').value = email;
+            document.getElementById('login-password').value = 'password123';
+        }
+        function togglePwd() {
+            var inp  = document.getElementById('login-password');
+            var icon = document.getElementById('pwd-icon');
+            if (inp.type === 'password') {
+                inp.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                inp.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        }
+    </script>
+}

@@ -1,143 +1,84 @@
 @{
-    ViewData["Title"] = "Audit Logs & Trails";
+    ViewData["Title"] = "System Audit Trail";
 }
 
-<div class="page-header">
+<div class="page-header animate-fade-in">
     <div class="page-header-left">
-        <h1 class="page-title">Audit Logs & Trails</h1>
-        <p class="page-subtitle">Comprehensive append-only audit trail for all system actions</p>
+        <h1 class="page-title">System Audit Trail</h1>
+        <p class="page-subtitle">Immutable log of all user activities and document transactions</p>
     </div>
     <div class="page-header-right">
-        <button class="btn btn-secondary" onclick="openModal('exportAuditModal')">
-            <i data-lucide="download"></i> Export CSV
-        </button>
+        <button class="btn btn-secondary" onclick="openModal('exportAuditModal')"><i data-lucide="download"></i> Export Logs</button>
     </div>
 </div>
 
-<!-- Stat Cards -->
-<div class="stat-grid">
-    <div class="stat-card">
-        <div class="stat-card-icon brand"><i data-lucide="list"></i></div>
-        <div class="stat-card-info"><span class="stat-card-value">1,247</span><span class="stat-card-label">Total Audit Entries</span></div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-card-icon brand"><i data-lucide="clock"></i></div>
-        <div class="stat-card-info"><span class="stat-card-value">42</span><span class="stat-card-label">Recent (24h)</span></div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-card-icon brand"><i data-lucide="pen-tool"></i></div>
-        <div class="stat-card-info"><span class="stat-card-value">18</span><span class="stat-card-label">Signatures Logged</span></div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-card-icon destructive"><i data-lucide="undo-2"></i></div>
-        <div class="stat-card-info"><span class="stat-card-value">7</span><span class="stat-card-label">Returns Logged</span></div>
-    </div>
-</div>
-
-<!-- Filter Bar -->
-<div class="filter-bar">
+<div class="filter-bar animate-fade-in">
     <div class="search-input">
         <i data-lucide="search"></i>
-        <input type="text" id="tableSearch" placeholder="Search by actor, reference, or detail..." />
+        <input type="text" placeholder="Search logs..." />
     </div>
-    <select class="filter-select" id="actionFilter" onchange="filterBySelect('actionFilter','.table-wrapper table',3)">
+    <select class="filter-select">
+        <option value="">All Users</option>
+        <option>Admin User</option>
+        <option>Juan Dela Cruz</option>
+        <option>Maria Santos</option>
+    </select>
+    <select class="filter-select">
         <option value="">All Actions</option>
-        <option value="create">CREATE</option>
-        <option value="update">UPDATE</option>
-        <option value="approve">APPROVE</option>
-        <option value="return">RETURN</option>
-        <option value="sign">SIGN</option>
-        <option value="forward">FORWARD</option>
-        <option value="login">LOGIN</option>
-        <option value="export">EXPORT</option>
-        <option value="delete">DELETE</option>
+        <option>Registered Doc</option>
+        <option>Endorsed</option>
+        <option>Signed</option>
+        <option>Escalated</option>
     </select>
 </div>
 
-<!-- Audit Table -->
-<div class="card">
+<div class="card animate-fade-in">
     <div class="table-wrapper" style="border:none;">
         <table>
             <thead>
-                <tr><th>Timestamp</th><th>Actor</th><th>Role</th><th>Action</th><th>Ref No</th><th>Detail</th><th>IP Address</th></tr>
+                <tr><th>Timestamp</th><th>User</th><th>Role</th><th>Action</th><th>Target Reference</th><th>IP Address</th></tr>
             </thead>
             <tbody>
                 <tr>
-                    <td class="text-meta">Jul 1, 2026 9:00 AM</td><td>Admin User</td><td>System Administrator</td>
-                    <td><span class="badge badge-action-default">LOGIN</span></td>
-                    <td>—</td><td>User logged in successfully</td><td>192.168.1.10</td>
+                    <td>@DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>Receiving Clerk</td>
+                    <td>Records Officer</td>
+                    <td><span class="badge badge-pending">Registered Doc</span></td>
+                    <td><a href="#">TNG-2026-0899</a></td>
+                    <td>192.168.1.100</td>
                 </tr>
                 <tr>
-                    <td class="text-meta">Jul 1, 2026 9:12 AM</td><td>Maria Santos</td><td>Dept. Personnel</td>
-                    <td><span class="badge badge-action-default">CREATE</span></td>
-                    <td><a href="/Documents/Details/TNG-2026-0014">TNG-2026-0014</a></td><td>Document created: Research Incentive Application</td><td>192.168.1.25</td>
+                    <td>@DateTime.Now.AddMinutes(-45).ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>Atty. Carlos Mendoza</td>
+                    <td>Mayor</td>
+                    <td><span class="badge badge-completed">Digital Signature</span></td>
+                    <td><a href="#">TNG-2026-0888</a></td>
+                    <td>192.168.1.105</td>
                 </tr>
                 <tr>
-                    <td class="text-meta">Jul 1, 2026 9:13 AM</td><td>System</td><td>Automated</td>
-                    <td><span class="badge badge-action-default">FORWARD</span></td>
-                    <td>TNG-2026-0014</td><td>Document routed to HRMO</td><td>—</td>
+                    <td>@DateTime.Now.AddHours(-2).ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>CART Officer</td>
+                    <td>Compliance Officer</td>
+                    <td><span class="badge badge-returned">Manual Escalation</span></td>
+                    <td><a href="#">TNG-2026-0004</a></td>
+                    <td>192.168.1.110</td>
                 </tr>
                 <tr>
-                    <td class="text-meta">Jun 30, 2026 3:45 PM</td><td>Dr. Ana Reyes</td><td>Dept. Head</td>
-                    <td><span class="badge badge-action-approve">APPROVE</span></td>
-                    <td><a href="/Documents/Details/TNG-2026-0001">TNG-2026-0001</a></td><td>Document approved and advanced to Step 4</td><td>192.168.1.30</td>
-                </tr>
-                <tr>
-                    <td class="text-meta">Jun 30, 2026 2:20 PM</td><td>Atty. Carlos Mendoza</td><td>Auth. Signatory</td>
-                    <td><span class="badge badge-action-sign">SIGN</span></td>
-                    <td><a href="/Documents/Details/TNG-2026-0002">TNG-2026-0002</a></td><td>Digital signature applied and verified</td><td>192.168.1.35</td>
-                </tr>
-                <tr>
-                    <td class="text-meta">Jun 29, 2026 11:00 AM</td><td>Budget Office</td><td>Dept. Head</td>
-                    <td><span class="badge badge-action-return">RETURN</span></td>
-                    <td><a href="/Documents/Details/TNG-2026-0004">TNG-2026-0004</a></td><td>Returned: Missing budget allocation breakdown</td><td>192.168.1.40</td>
-                </tr>
-                <tr>
-                    <td class="text-meta">Jun 28, 2026 4:10 PM</td><td>Admin User</td><td>System Administrator</td>
-                    <td><span class="badge badge-action-default">EXPORT</span></td>
-                    <td>—</td><td>CSV export of document data (authorized)</td><td>192.168.1.10</td>
-                </tr>
-                <tr>
-                    <td class="text-meta">Jun 28, 2026 4:08 PM</td><td>Unknown</td><td>—</td>
-                    <td><span class="badge badge-action-return">EXPORT</span></td>
-                    <td>—</td><td>Failed export attempt: incorrect password</td><td>192.168.1.55</td>
-                </tr>
-                <tr>
-                    <td class="text-meta">Jun 27, 2026 10:15 AM</td><td>Maria Santos</td><td>Dept. Personnel</td>
-                    <td><span class="badge badge-action-default">UPDATE</span></td>
-                    <td><a href="/Documents/Details/TNG-2026-0005">TNG-2026-0005</a></td><td>Document metadata updated: added attachment</td><td>192.168.1.25</td>
-                </tr>
-                <tr>
-                    <td class="text-meta">Jun 26, 2026 9:00 AM</td><td>Admin User</td><td>System Administrator</td>
-                    <td><span class="badge badge-action-return">DELETE</span></td>
-                    <td>TNG-2026-0010</td><td>Draft document deleted (never submitted)</td><td>192.168.1.10</td>
+                    <td>@DateTime.Now.AddHours(-5).ToString("yyyy-MM-dd HH:mm:ss")</td>
+                    <td>Admin User</td>
+                    <td>Executive Admin</td>
+                    <td><span class="badge badge-in-progress">Updated Dept</span></td>
+                    <td>HRMO</td>
+                    <td>192.168.1.50</td>
                 </tr>
             </tbody>
         </table>
     </div>
-    <div class="card-footer" style="display:flex; align-items:center; justify-content:space-between;">
-        <span class="text-meta">Showing 10 of 1,247 audit entries</span>
-        <div class="pagination">
-            <button class="pagination-btn">&laquo;</button>
-            <button class="pagination-btn active">1</button>
-            <button class="pagination-btn">2</button>
-            <button class="pagination-btn">3</button>
-            <button class="pagination-btn">...</button>
-            <button class="pagination-btn">125</button>
-            <button class="pagination-btn">&raquo;</button>
-        </div>
-    </div>
-</div>
-
-<!-- Tamper-Evident Notice -->
-<div class="tamper-notice">
-    <i data-lucide="lock"></i>
-    <span>🔒 Audit records are append-only and cryptographically chained. Exports are password-gated and logged as EXPORT events.</span>
 </div>
 
 <!-- Password-Gated Export Modal -->
 <div class="modal-overlay" id="exportAuditModal">
-    <div class="modal">
+    <div class="modal animate-fade-in">
         <div class="modal-header">
             <h3 class="modal-title">
                 <i data-lucide="lock" style="width:18px;height:18px;display:inline;vertical-align:middle;margin-right:6px;"></i>
@@ -146,17 +87,15 @@
             <button class="modal-close" onclick="closeModal('exportAuditModal')"><i data-lucide="x"></i></button>
         </div>
         <div class="modal-body">
-            <p class="text-meta" style="margin-bottom:16px;">
-                Enter the secondary export password to download audit trail data. This action will be logged as an EXPORT event.
-            </p>
+            <p style="margin-bottom:16px;" class="text-meta">Enter the secondary export password to authorize data extraction.</p>
             <div class="form-group">
                 <label class="form-label form-label-required">Export Password</label>
-                <input type="password" class="form-control" id="auditExportPwd" placeholder="Enter export password" />
+                <input type="password" class="form-control" id="exportAuditPwd" placeholder="Enter export password" />
             </div>
         </div>
         <div class="modal-footer">
             <button class="btn btn-secondary" onclick="closeModal('exportAuditModal')">Cancel</button>
-            <button class="btn btn-primary" onclick="handleExportPassword('auditExportPwd','exportAuditModal')">
+            <button class="btn btn-primary" onclick="var pwd = document.getElementById('exportAuditPwd').value; if(pwd==='password123'){ closeModal('exportAuditModal'); showToast('Audit Logs Exported Successfully', 'success'); } else { showToast('Incorrect Password', 'error'); }">
                 <i data-lucide="download"></i> Authorize Export
             </button>
         </div>

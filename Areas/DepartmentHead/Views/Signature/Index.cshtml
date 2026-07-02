@@ -2,171 +2,53 @@
     ViewData["Title"] = "Digital Signatures";
 }
 
-<!-- Page Header -->
-<div class="page-header">
+<div class="page-header animate-fade-in">
     <div class="page-header-left">
-        <h1 class="page-title">Digital Signatures</h1>
-        <p class="page-subtitle">Sign, verify, and manage digital signatures for document approvals</p>
+        <h1 class="page-title">Digital E-Signature</h1>
+        <p class="page-subtitle">Provide your verifiable digital signature for final endorsements and approvals</p>
     </div>
 </div>
 
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+<div class="grid animate-fade-in" style="grid-template-columns: 2fr 1fr; gap: 24px;">
     <!-- Signature Pad -->
     <div class="card">
-        <div class="card-header">
-            <span class="card-header-title">Signature Pad</span>
-        </div>
+        <div class="card-header"><span class="card-header-title">Sign Document: TNG-2026-0899</span></div>
         <div class="card-body">
-            <div class="form-group">
-                <label class="form-label form-label-required">Document Reference</label>
-                <select class="form-control">
-                    <option>TNG-2026-0001 — Research Incentive Application</option>
-                    <option>TNG-2026-0003 — Leave Application</option>
-                    <option>TNG-2026-0005 — Purchase Request</option>
-                    <option>TNG-2026-0007 — Special Order</option>
-                </select>
+            <div class="executive-summary">
+                <h2>Travel Order for Manila Conference</h2>
+                <p class="text-meta">Requesting Head: Juan Dela Cruz (HRMO)</p>
             </div>
-            <div class="signature-pad-wrapper">
-                <p class="text-caption" style="margin-bottom:8px;">Draw your signature below</p>
-                <canvas id="signatureCanvas" class="signature-pad-canvas" width="400" height="200"></canvas>
-                <div class="signature-pad-actions">
-                    <button class="btn btn-secondary btn-sm" onclick="signaturePad.clear()">
-                        <i data-lucide="eraser"></i> Clear
-                    </button>
-                    <button class="btn btn-primary btn-sm" onclick="saveSignature()">
-                        <i data-lucide="save"></i> Save Signature
-                    </button>
-                </div>
+            
+            <p style="margin-bottom:16px;">Please draw your signature in the box below to authorize the endorsement.</p>
+            <div class="signature-pad-container" id="signaturePad">
+                <i data-lucide="pen-tool" style="width:48px;height:48px;color:var(--border);margin-bottom:16px;"></i>
+                <span class="text-meta">Draw Signature Here</span>
+            </div>
+            
+            <div style="display:flex; justify-content:space-between; margin-top:24px;">
+                <button class="btn btn-ghost">Clear</button>
+                <button class="btn btn-primary" onclick="signDocument()"><i data-lucide="lock"></i> Save Signature & Hash</button>
             </div>
         </div>
     </div>
 
-    <!-- Verification -->
+    <!-- Verification Info -->
     <div class="card">
-        <div class="card-header">
-            <span class="card-header-title">Signature Verification</span>
-        </div>
+        <div class="card-header"><span class="card-header-title">Integrity Verification</span></div>
         <div class="card-body">
+            <p class="text-meta" style="margin-bottom:16px;">All signatures are hashed using SHA-256 for non-repudiation and stored securely in the <strong>Digital_Signatures</strong> table.</p>
+            
             <div class="form-group">
-                <label class="form-label">Verify Document Signature</label>
-                <div style="display:flex;gap:8px;">
-                    <input type="text" class="form-control" placeholder="Enter reference number" />
-                    <button class="btn btn-secondary" onclick="openModal('verifyModal')">
-                        <i data-lucide="shield-check"></i> Verify
-                    </button>
-                </div>
+                <label class="form-label">Signatory User</label>
+                <input type="text" class="form-control" value="Atty. Carlos Mendoza" readonly />
             </div>
-
-            <div style="margin-top:24px; padding:20px; border:1px solid var(--border); border-radius:var(--radius-card); text-align:center;">
-                <i data-lucide="check-circle" style="width:48px;height:48px;color:var(--brand);margin-bottom:12px;"></i>
-                <h2 class="h2">Signature Verified</h2>
-                <p class="text-meta" style="margin-top:4px;">TNG-2026-0002 — Signed by Hon. Mayor</p>
-                <p class="text-meta">Signed on: June 18, 2026 — 3:45 PM</p>
-                <span class="badge badge-completed" style="margin-top:8px;">Verified</span>
+            
+            <div class="form-group" style="margin-top:16px;">
+                <label class="form-label">Hash Preview</label>
+                <div style="background:#1e293b; color:#e2e8f0; font-family:monospace; padding:12px; border-radius:4px; font-size:12px; word-break:break-all;">
+                    Awaiting Signature Input...
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Signature History -->
-<div class="card" style="margin-top:24px;">
-    <div class="card-header">
-        <span class="card-header-title">Signature History</span>
-    </div>
-    <div class="table-wrapper" style="border:none;border-radius:0;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Ref No</th>
-                    <th>Document</th>
-                    <th>Signed By</th>
-                    <th>Role</th>
-                    <th>Signed At</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>TNG-2026-0002</td>
-                    <td>Travel Order — Mayor's Office Staff</td>
-                    <td>Hon. Mayor</td>
-                    <td>Authorized Signatory</td>
-                    <td>Jun 18, 2026 — 3:45 PM</td>
-                    <td><span class="badge badge-completed">Verified</span></td>
-                    <td>
-                        <button class="btn btn-ghost btn-icon btn-sm" title="View" onclick="openModal('verifyModal')"><i data-lucide="eye"></i></button>
-                        <button class="btn btn-ghost btn-icon btn-sm" title="Re-sign" onclick="showToast('Re-sign feature ready','success')"><i data-lucide="refresh-cw"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>TNG-2026-0006</td>
-                    <td>Certificate of Indigency — Maria Garcia</td>
-                    <td>Dr. Ana Reyes</td>
-                    <td>Department Head</td>
-                    <td>Jun 26, 2026 — 11:20 AM</td>
-                    <td><span class="badge badge-completed">Verified</span></td>
-                    <td>
-                        <button class="btn btn-ghost btn-icon btn-sm" title="View" onclick="openModal('verifyModal')"><i data-lucide="eye"></i></button>
-                        <button class="btn btn-ghost btn-icon btn-sm" title="Re-sign" onclick="showToast('Re-sign feature ready','success')"><i data-lucide="refresh-cw"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>TNG-2026-0001</td>
-                    <td>Research Incentive — Dr. Santos</td>
-                    <td>Atty. Carlos Mendoza</td>
-                    <td>City Administrator</td>
-                    <td>Jun 17, 2026 — 4:10 PM</td>
-                    <td><span class="badge badge-completed">Verified</span></td>
-                    <td>
-                        <button class="btn btn-ghost btn-icon btn-sm" title="View" onclick="openModal('verifyModal')"><i data-lucide="eye"></i></button>
-                        <button class="btn btn-ghost btn-icon btn-sm" title="Re-sign" onclick="showToast('Re-sign feature ready','success')"><i data-lucide="refresh-cw"></i></button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- Verify Signature Modal -->
-<div class="modal-overlay" id="verifyModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3 class="modal-title">Signature Verification</h3>
-            <button class="modal-close" onclick="closeModal('verifyModal')"><i data-lucide="x"></i></button>
-        </div>
-        <div class="modal-body" style="text-align:center;">
-            <i data-lucide="shield-check" style="width:48px;height:48px;color:var(--brand);margin-bottom:16px;"></i>
-            <h2 class="h2">Signature is Authentic</h2>
-            <p class="text-meta" style="margin-top:8px;">This digital signature has been verified and matches the stored record.</p>
-            <div style="margin-top:16px; padding:12px; border:1px solid var(--border); border-radius:var(--radius-card); text-align:left;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                    <span class="text-meta">Signer</span><span>Hon. Mayor</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                    <span class="text-meta">Document</span><span>TNG-2026-0002</span>
-                </div>
-                <div style="display:flex; justify-content:space-between;">
-                    <span class="text-meta">Signed At</span><span>Jun 18, 2026 3:45 PM</span>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" onclick="closeModal('verifyModal')">Close</button>
-        </div>
-    </div>
-</div>
-
-@section Scripts {
-<script>
-function saveSignature() {
-    if (signaturePad.isEmpty()) {
-        showToast('Please draw your signature first.', 'error');
-        return;
-    }
-    var data = signaturePad.toBase64();
-    showToast('Signature saved and verified successfully!', 'success');
-    signaturePad.clear();
-}
-</script>
-}

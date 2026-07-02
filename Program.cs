@@ -1,11 +1,63 @@
+using DinkToPdf;
+using DinkToPdf.Contracts;
+using Microsoft.EntityFrameworkCore;
+using TrackNGoMati.Filters;
+using TrackNGoMati.Models;
+using TrackNGoMati.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// ---------------------------------------------------------------
+// Services
+// ---------------------------------------------------------------
 builder.Services.AddControllersWithViews();
+
+// EF Core
+builder.Services.AddDbContext<TrackNgoDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("TrackNGoContext")));
+
+// Session (for auth)
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout        = TimeSpan.FromHours(8);
+    options.Cookie.HttpOnly    = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.Name        = "TrackNGo.Session";
+});
+
+// HttpContextAccessor (so services can read the session)
+builder.Services.AddHttpContextAccessor();
+
+// Application services
+builder.Services.AddScoped<SmsService>();
+builder.Services.AddScoped<ExportService>();
+builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+
+// OCR service — tessdata folder lives in wwwroot/tessdata
+builder.Services.AddSingleton(sp =>
+{
+    var env = sp.GetRequiredService<IWebHostEnvironment>();
+    var tessDataPath = Path.Combine(env.WebRootPath, "tessdata");
+    return new OcrService(tessDataPath);
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ---------------------------------------------------------------
+// Seed Database
+// ---------------------------------------------------------------
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context  = services.GetRequiredService<TrackNgoDbContext>();
+    context.Database.EnsureDeleted(); // FORCE RESET DB
+    TrackNGoMati.Data.DbInitializer.Initialize(context);
+}
+
+// ---------------------------------------------------------------
+// Middleware Pipeline
+// ---------------------------------------------------------------
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -14,19 +66,19 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
+app.UseSession();        // Must be before auth
 app.UseAuthorization();
 
-// Area routing
+// ---------------------------------------------------------------
+// Routes
+// ---------------------------------------------------------------
 app.MapControllerRoute(
-    name: "areas",
+    name:    "areas",
     pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
-// Default route — login page
 app.MapControllerRoute(
-    name: "default",
+    name:    "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.Run();

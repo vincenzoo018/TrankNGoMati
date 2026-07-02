@@ -52,23 +52,25 @@
     </div>
 </div>
 
+@model IEnumerable<TrackNGoMati.Models.Document>
+
 <!-- Escalation Stat Cards -->
 <div class="stat-grid">
     <div class="stat-card">
         <div class="stat-card-icon brand"><i data-lucide="check-circle"></i></div>
-        <div class="stat-card-info"><span class="stat-card-value">210</span><span class="stat-card-label">On Track</span></div>
+        <div class="stat-card-info"><span class="stat-card-value">--</span><span class="stat-card-label">On Track</span></div>
     </div>
     <div class="stat-card">
         <div class="stat-card-icon brand"><i data-lucide="alert-circle"></i></div>
-        <div class="stat-card-info"><span class="stat-card-value">8</span><span class="stat-card-label">Warning (Due Soon)</span></div>
+        <div class="stat-card-info"><span class="stat-card-value">--</span><span class="stat-card-label">Warning (Due Soon)</span></div>
     </div>
     <div class="stat-card">
         <div class="stat-card-icon destructive"><i data-lucide="alert-triangle"></i></div>
-        <div class="stat-card-info"><span class="stat-card-value">5</span><span class="stat-card-label">Overdue / Escalated</span></div>
+        <div class="stat-card-info"><span class="stat-card-value">@(Model?.Count() ?? 0)</span><span class="stat-card-label">Overdue / Escalated</span></div>
     </div>
     <div class="stat-card">
         <div class="stat-card-icon brand"><i data-lucide="lock"></i></div>
-        <div class="stat-card-info"><span class="stat-card-value">3</span><span class="stat-card-label">Locked for Escalation</span></div>
+        <div class="stat-card-info"><span class="stat-card-value">@(Model?.Count() ?? 0)</span><span class="stat-card-label">Locked for Escalation</span></div>
     </div>
 </div>
 
@@ -83,51 +85,30 @@
                 <tr><th>Ref No</th><th>Title</th><th>ARTA Tier</th><th>Limit</th><th>Elapsed</th><th>Remaining</th><th>Severity</th><th>Status</th><th>Routed To</th></tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>TNG-2026-0001</td><td>Research Incentive — Dr. Santos</td><td>Simple</td><td>3 days</td><td>2 days</td><td>1 day</td>
-                    <td><span class="badge badge-on-track">On Track</span></td>
-                    <td><span class="badge badge-in-progress">In Progress</span></td><td>—</td>
-                </tr>
-                <tr>
-                    <td>TNG-2026-0003</td><td>Leave Application — Juan Dela Cruz</td><td>Simple</td><td>3 days</td><td>3 days</td><td>0 days</td>
-                    <td><span class="badge badge-warning">Due Soon</span></td>
-                    <td><span class="badge badge-pending">Pending</span></td><td>—</td>
-                </tr>
-                <tr class="lock-icon-overlay">
-                    <td>
-                        <i data-lucide="lock" style="width:12px;height:12px;color:var(--destructive);display:inline;vertical-align:middle;margin-right:4px;"></i>
-                        TNG-2026-0004
-                    </td>
-                    <td>Memorandum — Budget Allocation Q3</td><td>Complex</td><td>7 days</td><td>21 days</td><td>-14 days</td>
-                    <td><span class="badge badge-overdue">Overdue</span></td>
-                    <td><span class="badge badge-returned">Escalated</span></td>
-                    <td style="color:var(--brand); font-weight:600;">Office of the Mayor</td>
-                </tr>
-                <tr>
-                    <td>TNG-2026-0005</td><td>Purchase Request — Office Supplies</td><td>Simple</td><td>3 days</td><td>1 day</td><td>2 days</td>
-                    <td><span class="badge badge-on-track">On Track</span></td>
-                    <td><span class="badge badge-in-progress">In Progress</span></td><td>—</td>
-                </tr>
-                <tr class="lock-icon-overlay">
-                    <td>
-                        <i data-lucide="lock" style="width:12px;height:12px;color:var(--destructive);display:inline;vertical-align:middle;margin-right:4px;"></i>
-                        TNG-2026-0009
-                    </td>
-                    <td>Memo Circular — Policy Update</td><td>Simple</td><td>3 days</td><td>5 days</td><td>-2 days</td>
-                    <td><span class="badge badge-overdue">Overdue</span></td>
-                    <td><span class="badge badge-returned">Escalated</span></td>
-                    <td style="color:var(--brand); font-weight:600;">Office of the Mayor</td>
-                </tr>
-                <tr>
-                    <td>TNG-2026-0007</td><td>Special Order — Committee Formation</td><td>Complex</td><td>7 days</td><td>4 days</td><td>3 days</td>
-                    <td><span class="badge badge-on-track">On Track</span></td>
-                    <td><span class="badge badge-in-progress">In Progress</span></td><td>—</td>
-                </tr>
-                <tr>
-                    <td>TNG-2026-0008</td><td>Admin Order — Office Reorganization</td><td>Highly Technical</td><td>20 days</td><td>3 days</td><td>17 days</td>
-                    <td><span class="badge badge-on-track">On Track</span></td>
-                    <td><span class="badge badge-pending">Pending</span></td><td>—</td>
-                </tr>
+                @if(Model == null || !Model.Any())
+                {
+                    <tr><td colspan="9" style="text-align:center; padding:24px;">No escalated documents found. All good!</td></tr>
+                }
+                @foreach(var doc in Model ?? Enumerable.Empty<TrackNGoMati.Models.Document>())
+                {
+                    var elapsed = (int)(DateTime.Now - doc.DateFiled).TotalDays;
+                    var remaining = doc.ArtaprocessingDays - elapsed;
+
+                    <tr class="lock-icon-overlay">
+                        <td>
+                            <i data-lucide="lock" style="width:12px;height:12px;color:var(--destructive);display:inline;vertical-align:middle;margin-right:4px;"></i>
+                            @doc.TrackingNumber
+                        </td>
+                        <td>@doc.Title</td>
+                        <td>@doc.DocumentType</td>
+                        <td>@doc.ArtaprocessingDays days</td>
+                        <td>@elapsed days</td>
+                        <td style="color:var(--destructive);">@remaining days</td>
+                        <td><span class="badge badge-overdue">Overdue</span></td>
+                        <td><span class="badge badge-returned">Escalated</span></td>
+                        <td style="color:var(--brand); font-weight:600;">Office of the Mayor</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>

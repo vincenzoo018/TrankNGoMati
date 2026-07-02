@@ -1,218 +1,74 @@
 @{
-    ViewData["Title"] = "Reports & Analytics";
+    ViewData["Title"] = "System Reports";
 }
 
-<div class="page-header">
+<div class="page-header animate-fade-in">
     <div class="page-header-left">
-        <h1 class="page-title">Reports & Analytics</h1>
-        <p class="page-subtitle">Document processing analytics, turnaround times, and ARTA compliance reports</p>
+        <h1 class="page-title">System Reports</h1>
+        <p class="page-subtitle">Generate and export system-wide performance and compliance reports</p>
     </div>
-    <div class="page-header-right">
-        <button class="btn btn-secondary" onclick="openModal('exportReportsModal')">
-            <i data-lucide="download"></i> Export Report
+</div>
+
+<div class="card animate-fade-in" style="max-width: 600px; margin: 0 auto; margin-top: 40px;" id="passwordGate">
+    <div class="card-header">
+        <span class="card-header-title"><i data-lucide="lock"></i> Password Protected Area</span>
+    </div>
+    <div class="card-body" style="text-align: center;">
+        <p style="margin-bottom: 16px;">This module contains sensitive system data. Please verify your identity.</p>
+        <div class="form-group" style="text-align: left;">
+            <label class="form-label">Admin Password</label>
+            <input type="password" id="reportPassword" class="form-control" placeholder="Enter password (demo: password123)" />
+        </div>
+        <button class="btn btn-primary" onclick="verifyPassword()" style="width: 100%; justify-content: center;">
+            <i data-lucide="unlock"></i> Unlock Reports
         </button>
-        <button class="btn btn-secondary" onclick="printPage()">
-            <i data-lucide="printer"></i> Print
-        </button>
     </div>
 </div>
 
-<div class="stat-grid">
-    <div class="stat-card">
-        <div class="stat-card-icon brand"><i data-lucide="trending-up"></i></div>
-        <div class="stat-card-info">
-            <span class="stat-card-value">2.8</span>
-            <span class="stat-card-label">Avg. Processing Days</span>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-card-icon brand"><i data-lucide="percent"></i></div>
-        <div class="stat-card-info">
-            <span class="stat-card-value">94.2%</span>
-            <span class="stat-card-label">ARTA Compliance Rate</span>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-card-icon brand"><i data-lucide="file-check"></i></div>
-        <div class="stat-card-info">
-            <span class="stat-card-value">182</span>
-            <span class="stat-card-label">Completed This Month</span>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-card-icon destructive"><i data-lucide="alert-triangle"></i></div>
-        <div class="stat-card-info">
-            <span class="stat-card-value">5</span>
-            <span class="stat-card-label">Active Escalations</span>
-        </div>
-    </div>
-</div>
-
-<div class="chart-grid">
-    <div class="card">
-        <div class="card-header">
-            <span class="card-header-title">Processing Turnaround by Department</span>
-        </div>
-        <div class="card-body chart-container">
-            <canvas id="deptTurnaroundChart" height="280"></canvas>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header">
-            <span class="card-header-title">ARTA Compliance by Tier</span>
-        </div>
-        <div class="card-body chart-container">
-            <canvas id="artaComplianceChart" height="280"></canvas>
-        </div>
-    </div>
-</div>
-
-<div class="chart-grid" style="margin-top:16px;">
-    <div class="card">
-        <div class="card-header">
-            <span class="card-header-title">Monthly Document Volume</span>
-        </div>
-        <div class="card-body chart-container">
-            <canvas id="monthlyVolumeChart" height="280"></canvas>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header">
-            <span class="card-header-title">Document Type Distribution</span>
-        </div>
-        <div class="card-body chart-container">
-            <canvas id="typeDistChart" height="280"></canvas>
-        </div>
-    </div>
-</div>
-
-<!-- Export Modal -->
-<div class="modal-overlay" id="exportReportsModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3 class="modal-title"><i data-lucide="lock" style="width:18px;height:18px;display:inline;vertical-align:middle;margin-right:6px;"></i>Password-Gated Export</h3>
-            <button class="modal-close" onclick="closeModal('exportReportsModal')"><i data-lucide="x"></i></button>
-        </div>
-        <div class="modal-body">
-            <p class="text-meta" style="margin-bottom:16px;">Enter the export password to download report data.</p>
-            <div class="form-group">
-                <label class="form-label form-label-required">Export Password</label>
-                <input type="password" class="form-control" id="reportExportPwd" placeholder="Enter export password" />
+<div id="reportsContent" style="display: none;" class="animate-fade-in">
+    <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 24px;">
+        <div class="card">
+            <div class="card-header"><span class="card-header-title">Document Summary Report</span></div>
+            <div class="card-body">
+                <p class="text-meta" style="margin-bottom:16px;">Export total documents processed by type and status.</p>
+                <button class="btn btn-primary" onclick="generateReport('Document Summary')"><i data-lucide="download"></i> Export CSV</button>
             </div>
         </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeModal('exportReportsModal')">Cancel</button>
-            <button class="btn btn-primary" onclick="handleExportPassword('reportExportPwd','exportReportsModal')">
-                <i data-lucide="download"></i> Authorize Export
-            </button>
+        <div class="card">
+            <div class="card-header"><span class="card-header-title">Department Performance</span></div>
+            <div class="card-body">
+                <p class="text-meta" style="margin-bottom:16px;">Export processing times and FSM bottleneck analysis.</p>
+                <button class="btn btn-primary" onclick="generateReport('Department Performance')"><i data-lucide="download"></i> Export CSV</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><span class="card-header-title">Audit Trail Export</span></div>
+            <div class="card-body">
+                <p class="text-meta" style="margin-bottom:16px;">Export complete system logs for compliance.</p>
+                <button class="btn btn-primary" onclick="generateReport('Audit Logs')"><i data-lucide="download"></i> Export CSV</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><span class="card-header-title">ARTA Escalation Report</span></div>
+            <div class="card-body">
+                <p class="text-meta" style="margin-bottom:16px;">Export RA 11032 compliance violations and escalations.</p>
+                <button class="btn btn-primary" onclick="generateReport('ARTA Escalations')"><i data-lucide="download"></i> Export CSV</button>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Dept Turnaround
-    var ctx1 = document.getElementById('deptTurnaroundChart');
-    if (ctx1) {
-        new Chart(ctx1, {
-            type: 'bar',
-            data: {
-                labels: ['HRMO','Mayor\'s Office','CDRRMO','Budget','GSO','Engineering','Social Welfare','Planning','Treasurer'],
-                datasets: [{
-                    label: 'Avg. Days',
-                    data: [2.1, 1.5, 4.2, 3.8, 2.7, 5.1, 1.9, 3.2, 2.4],
-                    backgroundColor: '#1A56DB',
-                    borderRadius: 4,
-                    barThickness: 20
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, grid: { color: '#E2E8F0' }, ticks: { font: { family: "'Plus Jakarta Sans'", size: 11 } } },
-                    x: { grid: { display: false }, ticks: { font: { family: "'Plus Jakarta Sans'", size: 10 }, maxRotation: 45 } }
-                }
+    <script>
+        function verifyPassword() {
+            var pwd = document.getElementById('reportPassword').value;
+            if (pwd === "password123") {
+                document.getElementById('passwordGate').style.display = 'none';
+                document.getElementById('reportsContent').style.display = 'block';
+                showToast('Access Granted', 'success');
+            } else {
+                showToast('Incorrect Password', 'error');
             }
-        });
-    }
-
-    // ARTA Compliance
-    var ctx2 = document.getElementById('artaComplianceChart');
-    if (ctx2) {
-        new Chart(ctx2, {
-            type: 'doughnut',
-            data: {
-                labels: ['Compliant', 'Warning', 'Overdue'],
-                datasets: [{
-                    data: [89, 6, 5],
-                    backgroundColor: ['#1A56DB', '#EBF2FF', '#DC2626'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom', labels: { font: { family: "'Plus Jakarta Sans'", size: 11 }, padding: 16 } } }
-            }
-        });
-    }
-
-    // Monthly Volume
-    var ctx3 = document.getElementById('monthlyVolumeChart');
-    if (ctx3) {
-        new Chart(ctx3, {
-            type: 'line',
-            data: {
-                labels: ['Jan','Feb','Mar','Apr','May','Jun'],
-                datasets: [{
-                    label: 'Documents',
-                    data: [32, 28, 45, 38, 52, 47],
-                    borderColor: '#1A56DB',
-                    backgroundColor: 'rgba(26,86,219,0.08)',
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#1A56DB'
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true, grid: { color: '#E2E8F0' } },
-                    x: { grid: { display: false } }
-                }
-            }
-        });
-    }
-
-    // Type Distribution
-    var ctx4 = document.getElementById('typeDistChart');
-    if (ctx4) {
-        new Chart(ctx4, {
-            type: 'bar',
-            data: {
-                labels: ['Leave','Travel','Memo','Purchase','Certificate','Special Order','Research','Admin Order','Memo Circular'],
-                datasets: [{
-                    label: 'Count',
-                    data: [42, 35, 28, 25, 38, 15, 22, 18, 24],
-                    backgroundColor: '#1A56DB',
-                    borderRadius: 4,
-                    barThickness: 18
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                indexAxis: 'y',
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { beginAtZero: true, grid: { color: '#E2E8F0' } },
-                    y: { grid: { display: false }, ticks: { font: { family: "'Plus Jakarta Sans'", size: 11 } } }
-                }
-            }
-        });
-    }
-});
-</script>
+        }
+    </script>
 }

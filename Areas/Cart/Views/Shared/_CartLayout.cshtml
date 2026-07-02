@@ -18,17 +18,20 @@
 <body>
     <header class="topbar">
         <button class="topbar-btn" onclick="toggleSidebar()" title="Menu" style="margin-right:auto;"><i data-lucide="menu"></i></button>
+        <button class="topbar-btn" title="Notifications"><i data-lucide="bell"></i><span class="topbar-badge"></span></button>
+        <span class="topbar-separator"></span>
         <a href="/" class="topbar-btn" title="Logout"><i data-lucide="log-out"></i></a>
     </header>
 
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-logo">
-            <div class="sidebar-logo-icon">C</div>
+            <div class="sidebar-logo-icon" style="background:var(--brand)">C</div>
             <div class="sidebar-logo-text">
-                <span class="sidebar-logo-title">Compliance Officer</span>
+                <span class="sidebar-logo-title">CART Office</span>
                 <span class="sidebar-logo-sub">TrackNGo Mati</span>
             </div>
         </div>
+        <div class="sidebar-role" id="current-role-label">Compliance Officer</div>
         
         <div class="sidebar-nav">
             <a href="/Cart/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")">
@@ -37,17 +40,17 @@
             <a href="/Cart/Document" class="sidebar-nav-item @(currentPage == "Document" ? "active" : "")">
                 <i data-lucide="file-text"></i> Documents
             </a>
-            <a href="/Cart/AuditTrail" class="sidebar-nav-item @(currentPage == "AuditTrail" ? "active" : "")">
-                <i data-lucide="shield-check"></i> Audit Trail
-            </a>
-            <a href="/Cart/Notification" class="sidebar-nav-item @(currentPage == "Notification" ? "active" : "")">
-                <i data-lucide="bell"></i> Notifications
-            </a>
             <a href="/Cart/ARTAEscalations" class="sidebar-nav-item @(currentPage == "ARTAEscalations" ? "active" : "")">
                 <i data-lucide="alert-triangle"></i> ARTA Escalations
             </a>
             <a href="/Cart/Reports" class="sidebar-nav-item @(currentPage == "Reports" ? "active" : "")">
                 <i data-lucide="bar-chart-3"></i> Reports
+            </a>
+            <a href="/Cart/Notification" class="sidebar-nav-item @(currentPage == "Notification" ? "active" : "")">
+                <i data-lucide="message-square"></i> Notifications
+            </a>
+            <a href="/Cart/AuditTrail" class="sidebar-nav-item @(currentPage == "AuditTrail" ? "active" : "")">
+                <i data-lucide="shield-check"></i> Audit Trail
             </a>
         </div>
     </nav>

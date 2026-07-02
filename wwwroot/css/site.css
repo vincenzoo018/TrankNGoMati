@@ -245,8 +245,8 @@ h2, .h2 {
 .sidebar-nav-item {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 12px;
+    gap: 12px;
+    padding: 10px 16px;
     border-radius: var(--radius-btn);
     font-size: var(--fs-body);
     font-weight: var(--fw-medium);
@@ -254,7 +254,7 @@ h2, .h2 {
     cursor: pointer;
     transition: all 0.15s;
     text-decoration: none;
-    margin-bottom: 1px;
+    margin-bottom: 4px;
 }
 
 .sidebar-nav-item:hover {
@@ -288,9 +288,22 @@ h2, .h2 {
     color: var(--ink-muted);
 }
 
-.sidebar-footer {
-    padding: 12px 16px;
-    border-top: 1px solid var(--border);
+.sidebar-profile {
+    margin: auto 16px 16px;
+    padding: 12px;
+    background: var(--brand-soft);
+    border-radius: var(--radius-card);
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-name {
+    font-size: var(--fs-body);
+    font-weight: var(--fw-bold);
+    color: var(--ink);
+}
+
+.profile-dept {
     font-size: var(--fs-meta);
     color: var(--ink-muted);
 }
@@ -962,6 +975,43 @@ textarea.form-control {
     box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.15);
 }
 
+.sidebar-nav-item {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.sidebar-nav-item:hover {
+    transform: translateX(5px);
+    background-color: var(--brand-alpha);
+    color: var(--brand);
+}
+
+.btn {
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeInSlideUp 0.5s ease-out forwards;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.page-header {
+    animation: fadeInSlideUp 0.4s ease-out forwards;
+}
+
+.table-wrapper {
+    animation: fadeInSlideUp 0.5s ease-out forwards;
+}
+
 .stepper-label {
     font-size: var(--fs-meta);
     font-weight: var(--fw-medium);
@@ -1542,4 +1592,48 @@ textarea.form-control {
         box-shadow: none;
         border: 1px solid #ccc;
     }
+}
+/* --- Modern Animations --- */
+@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeInSlideUp 0.4s ease-out forwards;
+}
+
+.sidebar-nav-link {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.sidebar-nav-link:hover {
+    transform: translateX(5px);
+    background-color: var(--brand-alpha);
+    color: var(--brand);
+}
+
+.btn {
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeInSlideUp 0.5s ease-out forwards;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }

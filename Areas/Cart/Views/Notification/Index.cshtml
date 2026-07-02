@@ -2,161 +2,65 @@
     ViewData["Title"] = "SMS Notifications";
 }
 
-<div class="page-header">
+<div class="page-header animate-fade-in">
     <div class="page-header-left">
-        <h1 class="page-title">SMS Notifications</h1>
-        <p class="page-subtitle">Monitor automated SMS alerts and manage the notification gateway</p>
+        <h1 class="page-title">SMS Notifications Gateway</h1>
+        <p class="page-subtitle">Monitor automated SMS alerts sent to clients and stakeholders for status updates and ARTA delays</p>
     </div>
     <div class="page-header-right">
-        <button class="btn btn-secondary" onclick="openModal('smsGatewayModal')">
-            <i data-lucide="settings"></i> Gateway Settings
-        </button>
+        <button class="btn btn-primary" onclick="sendSmsReminder()"><i data-lucide="send"></i> Dispatch Manual Reminder</button>
     </div>
 </div>
 
-<div class="stat-grid">
-    <div class="stat-card">
-        <div class="stat-card-icon brand"><i data-lucide="message-square"></i></div>
-        <div class="stat-card-info">
-            <span class="stat-card-value">342</span>
-            <span class="stat-card-label">Total SMS Sent</span>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-card-icon brand"><i data-lucide="check-circle"></i></div>
-        <div class="stat-card-info">
-            <span class="stat-card-value">328</span>
-            <span class="stat-card-label">Delivered</span>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-card-icon destructive"><i data-lucide="x-circle"></i></div>
-        <div class="stat-card-info">
-            <span class="stat-card-value">14</span>
-            <span class="stat-card-label">Failed</span>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-card-icon brand"><i data-lucide="activity"></i></div>
-        <div class="stat-card-info">
-            <span class="stat-card-value">95.9%</span>
-            <span class="stat-card-label">Success Rate</span>
-        </div>
-    </div>
-</div>
-
-<div class="filter-bar">
-    <div class="search-input">
-        <i data-lucide="search"></i>
-        <input type="text" id="tableSearch" placeholder="Search by recipient, mobile, or reference..." />
-    </div>
-    <select class="filter-select">
-        <option value="">All Statuses</option>
-        <option>Sent</option>
-        <option>Failed</option>
-    </select>
-</div>
-
-<div class="card">
+<div class="card animate-fade-in">
+    <div class="card-header"><span class="card-header-title">Recent Dispatches (SMS_Notifications Table)</span></div>
     <div class="table-wrapper" style="border:none;">
         <table>
             <thead>
-                <tr>
-                    <th>Recipient</th>
-                    <th>Mobile</th>
-                    <th>Ref No</th>
-                    <th>Message</th>
-                    <th>Status</th>
-                    <th>Sent At</th>
-                    <th>Action</th>
-                </tr>
+                <tr><th>Date Sent</th><th>Recipient Number</th><th>Linked Document</th><th>Message Preview</th><th>Status</th></tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Maria Santos</td>
-                    <td>0917-123-4567</td>
-                    <td>TNG-2026-0001</td>
-                    <td style="max-width:250px;">Your document TNG-2026-0001 has been endorsed and forwarded to City Administrator.</td>
-                    <td><span class="badge badge-sent">Sent</span></td>
-                    <td>Jun 16, 2026 10:31 AM</td>
-                    <td><button class="btn btn-ghost btn-sm" onclick="openModal('resendModal')"><i data-lucide="refresh-cw"></i></button></td>
+                    <td>Just now</td>
+                    <td style="font-family:monospace;">0918-765-4321</td>
+                    <td><a href="#">TNG-2026-0899</a></td>
+                    <td style="max-width: 300px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+                        TrackNGo: Your Travel Order is now Approved. Pick up at Mayor's Office.
+                    </td>
+                    <td><span class="badge badge-completed">Delivered</span></td>
+                </tr>
+                <tr class="alert-row">
+                    <td>1 hour ago</td>
+                    <td style="font-family:monospace;">0917-123-4567</td>
+                    <td><a href="#">TNG-2026-0004</a></td>
+                    <td style="max-width: 300px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+                        ARTA ALERT: Document TNG-2026-0004 has exceeded 20 days. Auto-escalated to Mayor.
+                    </td>
+                    <td><span class="badge badge-completed">Delivered</span></td>
                 </tr>
                 <tr>
-                    <td>Juan Dela Cruz</td>
-                    <td>0918-765-4321</td>
-                    <td>TNG-2026-0003</td>
-                    <td style="max-width:250px;">Your document TNG-2026-0003 is pending review. Status: Submitted.</td>
-                    <td><span class="badge badge-sent">Sent</span></td>
-                    <td>Jun 20, 2026 9:16 AM</td>
-                    <td><button class="btn btn-ghost btn-sm" onclick="openModal('resendModal')"><i data-lucide="refresh-cw"></i></button></td>
-                </tr>
-                <tr>
-                    <td>Pedro Reyes</td>
-                    <td>0919-111-2222</td>
-                    <td>TNG-2026-0004</td>
-                    <td style="max-width:250px;">ALERT: Your document TNG-2026-0004 has been RETURNED. Please check remarks.</td>
-                    <td><span class="badge badge-sent">Sent</span></td>
-                    <td>Jun 22, 2026 3:00 PM</td>
-                    <td><button class="btn btn-ghost btn-sm" onclick="openModal('resendModal')"><i data-lucide="refresh-cw"></i></button></td>
-                </tr>
-                <tr>
-                    <td>Ana Lopez</td>
-                    <td>0920-333-4444</td>
-                    <td>TNG-2026-0005</td>
-                    <td style="max-width:250px;">Your document TNG-2026-0005 has been approved. Proceeding to next step.</td>
-                    <td><span class="badge badge-failed">Failed</span></td>
-                    <td>Jun 25, 2026 11:42 AM</td>
-                    <td><button class="btn btn-ghost btn-sm" onclick="openModal('resendModal')"><i data-lucide="refresh-cw"></i></button></td>
+                    <td>2 hours ago</td>
+                    <td style="font-family:monospace;">0919-345-6789</td>
+                    <td><a href="#">TNG-2026-0095</a></td>
+                    <td style="max-width: 300px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">
+                        TrackNGo: Your Purchase Request has been returned for corrections.
+                    </td>
+                    <td><span class="badge badge-pending">Pending</span></td>
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
 
-<!-- Resend Modal -->
-<div class="modal-overlay" id="resendModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3 class="modal-title">Resend SMS</h3>
-            <button class="modal-close" onclick="closeModal('resendModal')"><i data-lucide="x"></i></button>
-        </div>
-        <div class="modal-body">
-            <p>Are you sure you want to resend this SMS notification?</p>
-            <p class="text-meta" style="margin-top:8px;">The message will be re-queued through the SMS gateway.</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" onclick="closeModal('resendModal')">Cancel</button>
-            <button class="btn btn-primary" onclick="closeModal('resendModal'); showToast('SMS re-queued successfully','success')">
-                <i data-lucide="send"></i> Resend
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- Gateway Settings Modal -->
-<div class="modal-overlay" id="smsGatewayModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h3 class="modal-title">SMS Gateway Settings</h3>
-            <button class="modal-close" onclick="closeModal('smsGatewayModal')"><i data-lucide="x"></i></button>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label class="form-label">Gateway Provider</label>
-                <input type="text" class="form-control" value="Mock SMS Gateway (Demo)" readonly style="background:#f8fafc;" />
-            </div>
-            <div class="form-group">
-                <label class="form-label">API Endpoint</label>
-                <input type="text" class="form-control" value="https://api.mocksms.local/send" readonly style="background:#f8fafc;" />
-            </div>
-            <div class="form-group">
-                <label class="form-label">Status</label>
-                <span class="badge badge-completed">Connected</span>
-            </div>
-            <p class="text-meta" style="margin-top:8px;">This is a mock SMS gateway for demonstration. In production, configure with a real SMS provider.</p>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" onclick="closeModal('smsGatewayModal')">Close</button>
+<div class="card animate-fade-in" style="margin-top: 24px;">
+    <div class="card-header"><span class="card-header-title">Gateway Connection Log</span></div>
+    <div class="card-body">
+        <div class="sms-log-box">
+            <p>> Gateway connection established: OK</p>
+            <p>> Syncing with SMS Provider API...</p>
+            <p>> Batch 1204 dispatched successfully at @DateTime.Now.ToString("HH:mm:ss")</p>
+            <p>> Pinging status callbacks...</p>
+            <p>> Awaiting further events.</p>
         </div>
     </div>
 </div>

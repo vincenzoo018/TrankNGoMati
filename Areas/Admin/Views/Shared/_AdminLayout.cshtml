@@ -18,6 +18,8 @@
 <body>
     <header class="topbar">
         <button class="topbar-btn" onclick="toggleSidebar()" title="Menu" style="margin-right:auto;"><i data-lucide="menu"></i></button>
+        <button class="topbar-btn" title="Notifications"><i data-lucide="bell"></i><span class="topbar-badge"></span></button>
+        <span class="topbar-separator"></span>
         <a href="/" class="topbar-btn" title="Logout"><i data-lucide="log-out"></i></a>
     </header>
 
@@ -25,10 +27,11 @@
         <div class="sidebar-logo">
             <div class="sidebar-logo-icon">A</div>
             <div class="sidebar-logo-text">
-                <span class="sidebar-logo-title">Executive Admin</span>
+                <span class="sidebar-logo-title">System Admin</span>
                 <span class="sidebar-logo-sub">TrackNGo Mati</span>
             </div>
         </div>
+        <div class="sidebar-role" id="current-role-label">Executive Admin</div>
         
         <div class="sidebar-nav">
             <a href="/Admin/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")">

@@ -1,152 +1,136 @@
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "Department Head Dashboard";
 }
 
-<!-- Page Header -->
-<div class="page-header">
+<div class="page-header animate-fade-in">
     <div class="page-header-left">
-        <h1 class="page-title">Dashboard</h1>
-        <p class="page-subtitle">Welcome back! Here's your document management overview.</p>
-    </div>
-    <div class="page-header-right">
-        <a href="/Documents/Create" class="btn btn-primary">
-            <i data-lucide="plus"></i> New Document
-        </a>
+        <h1 class="page-title">Monitoring Reports & Dashboard</h1>
+        <p class="page-subtitle">Document transaction insights across 52 departments</p>
     </div>
 </div>
 
-<!-- Stat Cards -->
-<div class="stat-grid">
-    <div class="stat-card">
-        <div class="stat-card-icon brand">
-            <i data-lucide="file-text"></i>
+<div class="filter-bar animate-fade-in" style="justify-content: space-between; display: flex; width: 100%;">
+    <div style="display:flex; gap:12px; align-items:center;">
+        <select class="filter-select"><option>May 1, 2026 — May 29, 2026</option></select>
+        <select class="filter-select"><option>Department</option></select>
+        <select class="filter-select"><option>Document Type</option></select>
+        <select class="filter-select"><option>Status</option></select>
+    </div>
+    <div style="display:flex; gap:12px; align-items:center;">
+        <button class="btn btn-secondary">Export PDF</button>
+        <button class="btn btn-secondary">Export CSV</button>
+    </div>
+</div>
+
+<div class="stat-grid animate-fade-in" style="margin-top:24px;">
+    <div class="stat-card" style="background:var(--brand); color:var(--white);">
+        <div class="stat-card-info" style="flex:1;">
+            <span class="stat-card-value" style="color:var(--white);">13</span>
+            <span class="stat-card-label" style="color:var(--brand-soft);">Total Documents</span>
+            <span style="font-size:11px; color:rgba(255,255,255,0.7); margin-top:4px;">This month</span>
         </div>
-        <div class="stat-card-info">
-            <span class="stat-card-value">247</span>
-            <span class="stat-card-label">Total Documents</span>
-        </div>
+        <div class="stat-card-icon" style="color:var(--white);"><i data-lucide="file-text"></i></div>
     </div>
     <div class="stat-card">
-        <div class="stat-card-icon brand">
-            <i data-lucide="clock"></i>
-        </div>
-        <div class="stat-card-info">
-            <span class="stat-card-value">38</span>
-            <span class="stat-card-label">Pending Review</span>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-card-icon brand">
-            <i data-lucide="check-circle"></i>
-        </div>
-        <div class="stat-card-info">
-            <span class="stat-card-value">182</span>
+        <div class="stat-card-info" style="flex:1;">
+            <span class="stat-card-value" style="color:var(--brand);">5</span>
             <span class="stat-card-label">Completed</span>
+            <span style="font-size:11px; color:var(--ink-muted); margin-top:4px;">38% completion rate</span>
         </div>
+        <div class="stat-card-icon brand"><i data-lucide="check-circle"></i></div>
     </div>
     <div class="stat-card">
-        <div class="stat-card-icon destructive">
-            <i data-lucide="alert-triangle"></i>
+        <div class="stat-card-info" style="flex:1;">
+            <span class="stat-card-value" style="color:var(--brand);">4</span>
+            <span class="stat-card-label">In Progress</span>
+            <span style="font-size:11px; color:var(--ink-muted); margin-top:4px;">Across 52 departments</span>
         </div>
-        <div class="stat-card-info">
-            <span class="stat-card-value">12</span>
-            <span class="stat-card-label">ARTA Escalated</span>
+        <div class="stat-card-icon brand"><i data-lucide="clock"></i></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-info" style="flex:1;">
+            <span class="stat-card-value" style="color:var(--brand);">2</span>
+            <span class="stat-card-label">Returned</span>
+            <span style="font-size:11px; color:var(--ink-muted); margin-top:4px;">Require resubmission</span>
+        </div>
+        <div class="stat-card-icon brand"><i data-lucide="rotate-ccw"></i></div>
+    </div>
+</div>
+
+<div class="form-row animate-fade-in">
+    <div class="card">
+        <div class="card-header" style="border:none; padding-bottom:0;">
+            <span class="card-header-title" style="font-size:14px;">Documents Filed Per Week — May 2026</span>
+        </div>
+        <div class="card-body">
+            <canvas id="barChart" height="200"></canvas>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" style="border:none; padding-bottom:0;">
+            <span class="card-header-title" style="font-size:14px;">Status Distribution</span>
+        </div>
+        <div class="card-body" style="display:flex; align-items:center;">
+            <div style="flex:1;"><canvas id="donutChart" height="200"></canvas></div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:12px; padding-left:20px;">
+                <div style="display:flex; justify-content:space-between; font-size:13px;">
+                    <span><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:var(--brand); margin-right:8px;"></span>Completed</span>
+                    <strong>79%</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:13px;">
+                    <span><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#60A5FA; margin-right:8px;"></span>In Progress</span>
+                    <strong>13%</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:13px;">
+                    <span><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#BFDBFE; margin-right:8px;"></span>Returned</span>
+                    <strong>8%</strong>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Charts Row -->
-<div class="chart-grid">
-    <div class="card">
-        <div class="card-header">
-            <span class="card-header-title">Documents by Status</span>
-            <span class="text-meta">Current period</span>
-        </div>
-        <div class="card-body chart-container">
-            <canvas id="statusChart" height="220"></canvas>
-        </div>
+<div class="card animate-fade-in" style="margin-top:24px;">
+    <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="card-header-title" style="font-size:14px;">Department Processing Summary</span>
+        <a href="#" style="font-size:12px; font-weight:600;">View Full Department Report &rarr;</a>
     </div>
-    <div class="card">
-        <div class="card-header">
-            <span class="card-header-title">Processing Turnaround</span>
-            <span class="text-meta">Average days</span>
-        </div>
-        <div class="card-body chart-container">
-            <canvas id="turnaroundChart" height="220"></canvas>
-        </div>
-    </div>
-</div>
-
-<!-- Recent Documents Table -->
-<div class="card" style="margin-top:16px;">
-    <div class="card-header">
-        <span class="card-header-title">Recent Documents</span>
-        <a href="/Documents" class="btn btn-secondary btn-sm">View All</a>
-    </div>
-    <div class="table-wrapper" style="border:none; border-radius:0;">
+    <div class="table-wrapper" style="border:none;">
         <table>
             <thead>
                 <tr>
-                    <th>Ref No</th>
-                    <th>Title</th>
-                    <th>Type</th>
-                    <th>Department</th>
-                    <th>Date Filed</th>
-                    <th>Status</th>
-                    <th>ARTA</th>
-                    <th></th>
+                    <th>DEPARTMENT</th>
+                    <th>TOTAL FILED</th>
+                    <th>COMPLETED</th>
+                    <th>IN PROGRESS</th>
+                    <th>RETURNED</th>
+                    <th>AVG. PROCESSING TIME</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td><a href="/Documents/Details/TNG-2026-0001">TNG-2026-0001</a></td>
-                    <td>Research Incentive Application — Dr. Santos</td>
-                    <td>Research Incentive</td>
-                    <td>HRMO</td>
-                    <td>Jun 15, 2026</td>
-                    <td><span class="badge badge-in-progress">In Progress</span></td>
-                    <td><span class="badge badge-on-track">On Track</span></td>
-                    <td><a href="/Documents/Details/TNG-2026-0001" class="btn btn-ghost btn-sm"><i data-lucide="eye"></i></a></td>
+                    <td style="font-weight:600;">HRMO</td>
+                    <td>24</td>
+                    <td>18</td>
+                    <td>4</td>
+                    <td>2</td>
+                    <td>1.2 days</td>
                 </tr>
                 <tr>
-                    <td><a href="/Documents/Details/TNG-2026-0002">TNG-2026-0002</a></td>
-                    <td>Travel Order — Mayor's Office Staff</td>
-                    <td>Travel Order</td>
-                    <td>Mayor's Office</td>
-                    <td>Jun 18, 2026</td>
-                    <td><span class="badge badge-completed">Completed</span></td>
-                    <td><span class="badge badge-completed">Completed</span></td>
-                    <td><a href="/Documents/Details/TNG-2026-0002" class="btn btn-ghost btn-sm"><i data-lucide="eye"></i></a></td>
+                    <td style="font-weight:600;">Mayor's Office</td>
+                    <td>42</td>
+                    <td>38</td>
+                    <td>4</td>
+                    <td>0</td>
+                    <td>0.8 days</td>
                 </tr>
                 <tr>
-                    <td><a href="/Documents/Details/TNG-2026-0003">TNG-2026-0003</a></td>
-                    <td>Leave Application — Juan Dela Cruz</td>
-                    <td>Leave Application</td>
-                    <td>CDRRMO</td>
-                    <td>Jun 20, 2026</td>
-                    <td><span class="badge badge-pending">Pending</span></td>
-                    <td><span class="badge badge-warning">Due Soon</span></td>
-                    <td><a href="/Documents/Details/TNG-2026-0003" class="btn btn-ghost btn-sm"><i data-lucide="eye"></i></a></td>
-                </tr>
-                <tr>
-                    <td><a href="/Documents/Details/TNG-2026-0004">TNG-2026-0004</a></td>
-                    <td>Memorandum — Budget Allocation Q3</td>
-                    <td>Memorandum</td>
-                    <td>Budget Office</td>
-                    <td>Jun 22, 2026</td>
-                    <td><span class="badge badge-returned">Returned</span></td>
-                    <td><span class="badge badge-overdue">Overdue</span></td>
-                    <td><a href="/Documents/Details/TNG-2026-0004" class="btn btn-ghost btn-sm"><i data-lucide="eye"></i></a></td>
-                </tr>
-                <tr>
-                    <td><a href="/Documents/Details/TNG-2026-0005">TNG-2026-0005</a></td>
-                    <td>Purchase Request — Office Supplies</td>
-                    <td>Purchase Request</td>
-                    <td>GSO</td>
-                    <td>Jun 25, 2026</td>
-                    <td><span class="badge badge-in-progress">In Progress</span></td>
-                    <td><span class="badge badge-on-track">On Track</span></td>
-                    <td><a href="/Documents/Details/TNG-2026-0005" class="btn btn-ghost btn-sm"><i data-lucide="eye"></i></a></td>
+                    <td style="font-weight:600;">City Engineering</td>
+                    <td>15</td>
+                    <td>10</td>
+                    <td>3</td>
+                    <td>2</td>
+                    <td>3.5 days</td>
                 </tr>
             </tbody>
         </table>
@@ -154,72 +138,49 @@
 </div>
 
 @section Scripts {
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Status Doughnut Chart
-    var ctx1 = document.getElementById('statusChart');
-    if (ctx1) {
-        new Chart(ctx1, {
-            type: 'doughnut',
-            data: {
-                labels: ['Completed', 'In Progress', 'Pending', 'Returned'],
-                datasets: [{
-                    data: [182, 38, 15, 12],
-                    backgroundColor: ['#1A56DB', '#EBF2FF', '#93B4F5', '#DC2626'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 },
-                            padding: 16
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    // Turnaround Bar Chart
-    var ctx2 = document.getElementById('turnaroundChart');
-    if (ctx2) {
-        new Chart(ctx2, {
-            type: 'bar',
-            data: {
-                labels: ['HRMO', "Mayor's Office", 'CDRRMO', 'Budget', 'GSO', 'Engineering'],
-                datasets: [{
-                    label: 'Avg. Days',
-                    data: [2.1, 1.5, 4.2, 3.8, 2.7, 5.1],
-                    backgroundColor: '#1A56DB',
-                    borderRadius: 4,
-                    barThickness: 24
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var ctxBar = document.getElementById('barChart').getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [{
+                        label: 'Documents',
+                        data: [78, 84, 91, 59],
+                        backgroundColor: '#1A56DB',
+                        borderRadius: 4
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: { color: '#E2E8F0' },
-                        ticks: { font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 } }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: { font: { family: "'Plus Jakarta Sans', sans-serif", size: 11 } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { display: false }, border: { display: false } },
+                        x: { grid: { display: false }, border: { display: false } }
                     }
                 }
-            }
+            });
+
+            var ctxDonut = document.getElementById('donutChart').getContext('2d');
+            new Chart(ctxDonut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'In Progress', 'Returned'],
+                    datasets: [{
+                        data: [79, 13, 8],
+                        backgroundColor: ['#1A56DB', '#60A5FA', '#BFDBFE'],
+                        borderWidth: 0,
+                        cutout: '75%'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
         });
-    }
-});
-</script>
+    </script>
 }

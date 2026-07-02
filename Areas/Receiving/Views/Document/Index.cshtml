@@ -204,7 +204,16 @@
                     <div style="padding: 20px;">
                         <div class="form-group" style="display: flex; align-items: center; margin-bottom: 12px;">
                             <label style="width: 180px; font-weight: 700; font-size: 11px;">TO:</label>
-                            <input type="text" class="form-control" placeholder="Recipient / Department" style="flex: 1;" />
+                            <select class="form-control" style="flex: 1;">
+                                <option value="">Select Destination Department</option>
+                                @if (ViewBag.Departments != null)
+                                {
+                                    foreach (var d in ViewBag.Departments)
+                                    {
+                                        <option value="@d.Id">@d.DepartmentName</option>
+                                    }
+                                }
+                            </select>
                         </div>
                         <div class="form-group" style="display: flex; align-items: center; margin-bottom: 16px;">
                             <label style="width: 180px; font-weight: 700; font-size: 11px;">DOCUMENT ATTACHED IS:</label>
@@ -212,49 +221,17 @@
                         </div>
                         
                         <div class="form-group" style="margin-bottom: 20px;">
-                            <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 8px;">Instructions</label>
-                            <textarea class="form-control" rows="4" placeholder="One instruction per line..."></textarea>
+                            <label style="font-size: 11px; font-weight: 600; display: block; margin-bottom: 8px;">Instructions / Action Required</label>
+                            <textarea class="form-control" rows="3" placeholder="Specify instructions for the receiving department..."></textarea>
                         </div>
                         
-                        <div style="display: flex; gap: 32px; margin-top: 16px;">
-                            <!-- Col 1 -->
-                            <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
-                                <div style="display:flex; align-items:center;">
-                                    <label style="width:100px; font-size:11px; font-weight:700;">FYI:</label>
-                                    <input type="text" class="form-control" style="flex:1;" />
-                                </div>
-                                <div style="display:flex; align-items:center;">
-                                    <label style="width:100px; font-size:11px; font-weight:700;">REVIEW:</label>
-                                    <input type="text" class="form-control" style="flex:1;" />
-                                </div>
-                                <div style="display:flex; align-items:center;">
-                                    <label style="width:100px; font-size:11px; font-weight:700;">FORWARD:</label>
-                                    <input type="text" class="form-control" style="flex:1;" />
-                                </div>
-                                <div style="display:flex; align-items:center;">
-                                    <label style="width:100px; font-size:11px; font-weight:700;">REVIEW BY:</label>
-                                    <input type="text" class="form-control" style="flex:1;" />
-                                </div>
+                        <div style="display: flex; gap: 20px; align-items: center; justify-content: center; margin-top: 24px; padding: 16px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px;">
+                            <div style="width: 80px; height: 80px; background: white; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
+                                <i data-lucide="qr-code" style="width: 40px; height: 40px; color: #94a3b8;"></i>
                             </div>
-                            
-                            <!-- Col 2 -->
-                            <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
-                                <div style="display:flex; align-items:center;">
-                                    <label style="width:100px; font-size:11px; font-weight:700;">APPROVE:</label>
-                                    <input type="text" class="form-control" style="flex:1;" />
-                                </div>
-                                <div style="display:flex; align-items:center;">
-                                    <label style="width:100px; font-size:11px; font-weight:700;">RESPOND:</label>
-                                    <input type="text" class="form-control" style="flex:1;" />
-                                </div>
-                                <div style="display:flex; align-items:center;">
-                                    <label style="width:100px; font-size:11px; font-weight:700;">RETURN TO:</label>
-                                    <input type="text" class="form-control" style="flex:1;" />
-                                </div>
-                                <div style="display:flex; align-items:center;">
-                                    <label style="width:100px; font-size:11px; font-weight:700;">DATE:</label>
-                                    <input type="date" class="form-control" style="flex:1;" value="2026-07-02" />
-                                </div>
+                            <div style="font-size: 12px; color: var(--ink-muted); max-width: 250px;">
+                                <strong style="color: var(--ink); display: block; margin-bottom: 4px;">QR Code Auto-Generation</strong>
+                                A unique tracking QR Code will be automatically generated and embedded into the printable routing slip upon submission.
                             </div>
                         </div>
 

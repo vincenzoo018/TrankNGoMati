@@ -138,7 +138,7 @@ namespace TrackNGoMati.Areas.Receiving.Controllers
             ViewBag.CurrentPage = "RoutingSlip";
             var doc = _context.Documents.FirstOrDefault(d => d.TrackingNumber == id);
             if (doc == null) return NotFound();
-            return View("~/Areas/Receiving/Views/RoutingSlip/Index.cshtml", doc);
+            return View(doc);
         }
 
         // GET: Document details
@@ -148,6 +148,7 @@ namespace TrackNGoMati.Areas.Receiving.Controllers
             ViewBag.CurrentPage = "Document";
             var doc = _context.Documents
                 .Include(d => d.AuditTrailEntries).ThenInclude(a => a.User)
+                .Include(d => d.DocumentComments).ThenInclude(c => c.User)
                 .Include(d => d.WorkflowTransitions)
                 .FirstOrDefault(d => d.TrackingNumber == id);
             if (doc == null) return NotFound();
@@ -200,6 +201,55 @@ namespace TrackNGoMati.Areas.Receiving.Controllers
                 _sms.Send(doc.Id, doc.ContactNumber, doc.SubmittedBy, $"TrackNGo Mati: Your document ({trackingNumber}) was verified and forwarded to the Department Head.", "Forwarded");
 
             return Json(new { success = true, redirectUrl = "/Receiving/Document" });
+        }
+        [HttpPost]
+        public IActionResult AddAnchoredComment([FromBody] AnchoredCommentDto request)
+        {
+            var doc = _context.Documents.FirstOrDefault(d => d.TrackingNumber == request.TrackingNumber);
+            if (doc == null) return Json(new { success = false, message = "Document not found" });
+
+            var userId = HttpContext.Session.GetInt32(SessionHelper.KEY_USER_ID) ?? 0;
+
+            var comment = new DocumentComment
+            {
+                DocumentId = doc.Id,
+                UserId = userId,
+                Content = request.Content,
+                AnchorLocation = request.AnchorLocation,
+                WorkflowState = request.WorkflowState,
+                RemarkType = "Anchored",
+                IsInternal = false,
+                PostedAt = DateTime.Now,
+                Resolved = false
+            };
+
+            _context.DocumentComments.Add(comment);
+            _context.SaveChanges();
+
+            return Json(new { success = true, commentId = comment.Id, timestamp = comment.PostedAt.ToString("MMM dd, yyyy \\- h:mm tt") });
+        }
+
+        [HttpPost]
+        public IActionResult ResolveComment([FromBody] ResolveCommentDto request)
+        {
+            var comment = _context.DocumentComments.Find(request.CommentId);
+            if (comment == null) return Json(new { success = false, message = "Comment not found" });
+
+            comment.Resolved = true;
+            _context.SaveChanges();
+
+            return Json(new { success = true });
+        }
+
+        public class AnchoredCommentDto {
+            public string TrackingNumber { get; set; } = "";
+            public string Content { get; set; } = "";
+            public string? AnchorLocation { get; set; }
+            public string? WorkflowState { get; set; }
+        }
+
+        public class ResolveCommentDto {
+            public int CommentId { get; set; }
         }
     }
 }

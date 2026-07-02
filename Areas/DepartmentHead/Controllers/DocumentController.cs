@@ -1,39 +1,96 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TrackNGoMati.Filters;
 using TrackNGoMati.Models;
+using TrackNGoMati.Services;
 using System.Linq;
+using System;
 
 namespace TrackNGoMati.Areas.DepartmentHead.Controllers
 {
     [Area("DepartmentHead")]
+    [RequireLogin(SessionHelper.ROLE_DEPT)]
     public class DocumentController : Controller
     {
         private readonly TrackNgoDbContext _context;
+        private readonly SmsService _sms;
 
-        public DocumentController(TrackNgoDbContext context)
+        public DocumentController(TrackNgoDbContext context, SmsService sms)
         {
             _context = context;
+            _sms = sms;
         }
 
         public IActionResult Index(string? search = null)
         {
-            ViewData["Title"] = "Document";
+            ViewData["Title"] = "Department Endorsements";
             ViewBag.CurrentPage = "Document";
             
-            var query = _context.Documents.AsQueryable();
+            // FSM Step 2: Department Head
+            var query = _context.Documents.Where(d => d.CurrentStepIndex == 2).AsQueryable();
             if (!string.IsNullOrEmpty(search))
             {
                 query = query.Where(d => d.TrackingNumber.Contains(search) || d.Title.Contains(search));
             }
 
-            return View(query.ToList());
+            return View(query.OrderByDescending(d => d.LastUpdated).ToList());
         }
 
         public IActionResult Details(string? id)
         {
             ViewData["Title"] = "Document Details";
             ViewBag.CurrentPage = "Document";
-            var doc = _context.Documents.FirstOrDefault(d => d.TrackingNumber == id);
+            var doc = _context.Documents
+                .Include(d => d.AuditTrailEntries).ThenInclude(a => a.User)
+                .Include(d => d.WorkflowTransitions)
+                .FirstOrDefault(d => d.TrackingNumber == id);
+                
+            if (doc == null) return NotFound();
             return View(doc);
+        }
+        
+        [HttpPost]
+        public IActionResult Endorse(string trackingNumber, string signatureData)
+        {
+            var doc = _context.Documents.FirstOrDefault(d => d.TrackingNumber == trackingNumber);
+            if (doc == null) return Json(new { success = false, message = "Document not found" });
+
+            if (doc.CurrentStepIndex != 2)
+                return Json(new { success = false, message = "Document is not in the Department Head stage." });
+
+            var userId = HttpContext.Session.GetInt32(SessionHelper.KEY_USER_ID) ?? 0;
+            
+            _context.DigitalSignatures.Add(new DigitalSignature
+            {
+                DocumentId = doc.Id,
+                SignedByUserId = userId,
+                SignatureImagePath = signatureData, // Storing base64 string directly
+                SignatureHash = "sha256:generated-hash-placeholder", // Real hash logic here
+                ActionType = "Endorsed",
+                IsVerified = true,
+                SignedAt = DateTime.Now
+            });
+
+            // FSM Transition to CART (Step 3)
+            doc.CurrentStepIndex = 3;
+            doc.LastUpdated = DateTime.Now;
+
+            _context.AuditTrailEntries.Add(new AuditTrailEntry
+            {
+                DocumentId = doc.Id,
+                UserId = userId,
+                Action = "Endorsed",
+                Details = "Department Head reviewed, signed, and endorsed the document to CART.",
+                Timestamp = DateTime.Now,
+                Ipaddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1"
+            });
+
+            _context.SaveChanges();
+            
+            if (!string.IsNullOrEmpty(doc.ContactNumber))
+                _sms.Send(doc.Id, doc.ContactNumber, doc.SubmittedBy, $"TrackNGo Mati: Your document ({trackingNumber}) was endorsed by the Department Head and is now with CART.", "Endorsed");
+
+            return Json(new { success = true, redirectUrl = "/DepartmentHead/Document" });
         }
     }
 }

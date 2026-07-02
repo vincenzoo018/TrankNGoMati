@@ -4,25 +4,15 @@
 }
 
 <!-- Page Header -->
-<div class="page-header animate-fade-in" style="align-items:center; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+<div class="page-header animate-fade-in" style="align-items:center; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; display: flex; justify-content: space-between;">
     <div class="page-header-left">
         <h1 class="page-title" style="font-size: 24px;">@Model.TrackingNumber</h1>
         <p class="page-subtitle" style="font-size: 14px;">@Model.Title — @Model.SubmittedBy</p>
     </div>
-    <div class="page-header-right" style="display: flex; gap: 8px;">
+    <div class="page-header-right">
         <a href="/Cart/Document" class="btn btn-secondary" style="padding: 8px 16px; border-color:var(--border);">
-            <i data-lucide="arrow-left"></i> Back
+            <i data-lucide="arrow-left"></i> Back to List
         </a>
-        <button class="btn btn-secondary" onclick="window.print()" style="padding: 8px 16px; border-color:var(--border);">
-            <i data-lucide="printer"></i> Print
-        </button>
-        <button class="btn btn-secondary" style="padding: 8px 16px; border-color:var(--border);">
-            <i data-lucide="download"></i> Export
-        </button>
-        
-        <button class="btn" style="padding: 8px 16px; border: 1px solid #F59E0B; color: #F59E0B; background: white;">
-            <i data-lucide="flag"></i> Flag Issue
-        </button>
     </div>
 </div>
 
@@ -53,159 +43,194 @@
 </div>
 
 <div class="animate-fade-in" style="display: flex; gap: 24px; align-items: flex-start;">
-    <!-- LEFT COLUMN -->
+    <!-- LEFT COLUMN: Preview & Info -->
     <div style="flex: 2; display: flex; flex-direction: column; gap: 24px;">
         
-        <!-- Document Information -->
+        <!-- Document Preview Panel -->
         <div class="card" style="margin: 0; border-radius: 8px;">
             <div class="card-header" style="border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: var(--ink);">Document Information</h3>
-                @{
-                    var statusText = Model.CurrentStatus switch {
-                        1 => "PENDING",
-                        2 => "IN PROGRESS",
-                        3 => "COMPLETED",
-                        4 => "RETURNED",
-                        _ => "UNKNOWN"
-                    };
+                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: var(--ink);"><i data-lucide="eye" style="width: 16px; height: 16px; display:inline-block; vertical-align:middle; margin-right:6px;"></i> Document Preview</h3>
+                <a href="@Model.AttachmentPath" target="_blank" class="btn btn-secondary" style="padding: 4px 12px; font-size: 12px;">Open in New Tab</a>
+            </div>
+            <div class="card-body" style="padding: 0; background: #e5e7eb; display: flex; justify-content: center; align-items: center; min-height: 700px; overflow: hidden; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+                @if (!string.IsNullOrEmpty(Model.AttachmentPath))
+                {
+                    if (Model.AttachmentPath.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                    {
+                        <iframe src="@Model.AttachmentPath" style="width: 100%; height: 700px; border: none;"></iframe>
+                    }
+                    else
+                    {
+                        <img src="@Model.AttachmentPath" style="max-width: 100%; max-height: 700px; object-fit: contain;" />
+                    }
                 }
-                <span style="border: 1px solid var(--brand); color: var(--brand); padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px;">@statusText</span>
+                else
+                {
+                    <div style="color: var(--ink-muted); text-align: center; padding: 40px;">
+                        <i data-lucide="file-image" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                        <p>No document attachment available.</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Document Information -->
+        <div class="card" style="margin: 0; border-radius: 8px;">
+            <div class="card-header" style="border-bottom: 1px solid var(--border); padding: 16px 24px;">
+                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: var(--ink);">Document Metadata</h3>
             </div>
             <div class="card-body" style="padding: 24px;">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-                    <!-- Col 1 -->
-                    <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
                         <div>
-                            <div style="font-size: 10px; font-weight: 600; color: var(--ink-muted); margin-bottom: 4px; text-transform: uppercase;">Reference No</div>
-                            <div style="font-size: 14px; color: var(--ink);">@Model.TrackingNumber</div>
+                            <div style="font-size: 10px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase;">Tracking Number</div>
+                            <div style="font-size: 14px; color: var(--ink); font-weight: 500;">@Model.TrackingNumber</div>
                         </div>
                         <div>
-                            <div style="font-size: 10px; font-weight: 600; color: var(--ink-muted); margin-bottom: 4px; text-transform: uppercase;">Department</div>
-                            <div style="font-size: 14px; color: var(--ink);">@(Model.OriginatingDepartment ?? "HRMO")</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 10px; font-weight: 600; color: var(--ink-muted); margin-bottom: 4px; text-transform: uppercase;">Submitted By</div>
+                            <div style="font-size: 10px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase;">Sender / Submitted By</div>
                             <div style="font-size: 14px; color: var(--ink);">@Model.SubmittedBy</div>
                         </div>
                         <div>
-                            <div style="font-size: 10px; font-weight: 600; color: var(--ink-muted); margin-bottom: 4px; text-transform: uppercase;">Current Step</div>
-                            <div style="font-size: 14px; color: var(--ink);">Step @Model.CurrentStepIndex of @Model.TotalSteps — Accepted</div>
+                            <div style="font-size: 10px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase;">Contact Number</div>
+                            <div style="font-size: 14px; color: var(--ink);">@Model.ContactNumber</div>
                         </div>
                     </div>
-                    <!-- Col 2 -->
-                    <div style="display: flex; flex-direction: column; gap: 24px;">
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
                         <div>
-                            <div style="font-size: 10px; font-weight: 600; color: var(--ink-muted); margin-bottom: 4px; text-transform: uppercase;">Document Type</div>
-                            <div style="font-size: 14px; color: var(--ink);">@Model.DocumentType</div>
+                            <div style="font-size: 10px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase;">Department</div>
+                            <div style="font-size: 14px; color: var(--ink);">@(Model.OriginatingDepartment ?? "N/A")</div>
                         </div>
                         <div>
-                            <div style="font-size: 10px; font-weight: 600; color: var(--ink-muted); margin-bottom: 4px; text-transform: uppercase;">Date Filed</div>
-                            <div style="font-size: 14px; color: var(--ink);">@Model.DateFiled.ToString("MMMM dd, yyyy")</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 10px; font-weight: 600; color: var(--ink-muted); margin-bottom: 4px; text-transform: uppercase;">ARTA Tier</div>
-                            <div style="font-size: 14px; color: var(--ink);">Simple — @Model.ArtaprocessingDays working days</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 10px; font-weight: 600; color: var(--ink-muted); margin-bottom: 8px; text-transform: uppercase;">ARTA Status</div>
-                            <span style="border: 1px solid var(--brand); color: var(--brand); padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; width: fit-content; display: block;">ON TRACK</span>
+                            <div style="font-size: 10px; font-weight: 600; color: var(--ink-muted); text-transform: uppercase;">Date Filed</div>
+                            <div style="font-size: 14px; color: var(--ink);">@Model.DateFiled.ToString("MMM dd, yyyy - hh:mm tt")</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Attachments -->
-        <div class="card" style="margin: 0; border-radius: 8px;">
-            <div class="card-header" style="border-bottom: none; padding: 16px 24px;">
-                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: var(--ink);">Attachments</h3>
-            </div>
-            <div class="card-body" style="padding: 0 24px 24px 24px; display: flex; gap: 16px; flex-wrap: wrap;">
-                @if (!string.IsNullOrEmpty(Model.AttachmentPath))
-                {
-                    <a href="@Model.AttachmentPath" target="_blank" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; text-decoration: none; color: var(--brand); font-size: 13px;">
-                        <i data-lucide="file" style="width: 16px; height: 16px;"></i> @System.IO.Path.GetFileName(Model.AttachmentPath) (Scanned)
-                    </a>
-                }
-                <!-- Dummy attachments to match design -->
-                <a href="#" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; text-decoration: none; color: var(--brand); font-size: 13px;">
-                    <i data-lucide="file" style="width: 16px; height: 16px;"></i> research_application.pdf <span style="color:var(--ink-muted);">(245 KB)</span>
-                </a>
-                <a href="#" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; text-decoration: none; color: var(--brand); font-size: 13px;">
-                    <i data-lucide="file" style="width: 16px; height: 16px;"></i> supporting_docs.pdf <span style="color:var(--ink-muted);">(128 KB)</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Routing Slip Preview -->
-        <div class="card" style="margin: 0; border-radius: 8px;">
-            <div class="card-header" style="border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: var(--ink);">Routing Slip</h3>
-                <a href="/Cart/Document/RoutingSlip/@Model.TrackingNumber" style="display: flex; align-items: center; gap: 6px; color: var(--ink-muted); text-decoration: none; font-size: 13px;">
-                    <i data-lucide="printer" style="width: 16px; height: 16px;"></i> Print Slip
-                </a>
-            </div>
-            <div class="card-body" style="padding: 24px; min-height: 200px; background: #fafafa;">
-                <!-- Placeholder for visual match -->
-                <div style="border: 1px solid #BFDBFE; border-radius: 8px; background: white; overflow: hidden;">
-                    <div style="background-color: #EFF6FF; text-align: center; padding: 12px; font-weight: 700; font-size: 12px; color: #1E3A8A; letter-spacing: 0.5px; border-bottom: 1px solid #BFDBFE;">
-                        ROUTING SLIP (MAIL)
-                    </div>
-                    <div style="padding: 20px; font-size: 13px; color: var(--ink);">
-                        <p><strong>TO:</strong> Office of the Mayor</p>
-                        <p><strong>DOCUMENT ATTACHED IS:</strong> Research Application + 2 attachments</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
     
-    <!-- RIGHT COLUMN -->
-    <div style="flex: 1;">
+    <!-- RIGHT COLUMN: Actions, Comments, Tracer -->
+    <div style="flex: 1; display: flex; flex-direction: column; gap: 24px;">
+        
+        <!-- Actions Panel -->
+        <div class="card" style="margin: 0; border-radius: 8px;">
+            <div class="card-header" style="border-bottom: 1px solid var(--border); padding: 16px 24px; background: #f8fafc; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: var(--ink);"><i data-lucide="zap" style="width: 16px; height: 16px; display:inline-block; vertical-align:middle; margin-right:6px; color: #F59E0B;"></i> Actions</h3>
+            </div>
+            <div class="card-body" style="padding: 16px 24px; display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn btn-primary" onclick="clearDocument()" style="width: 100%; justify-content: center;">
+                    <i data-lucide="check-circle"></i> Clear Document
+                </button>
+                <button class="btn" onclick="flagDocument()" style="width: 100%; justify-content: center; border: 1px solid #F59E0B; color: #F59E0B; background: white;">
+                    <i data-lucide="flag"></i> Flag ARTA Issue
+                </button>
+                <div style="display: flex; gap: 12px; margin-top: 8px;">
+                    <button class="btn btn-secondary" onclick="window.print()" style="flex: 1; justify-content: center;">
+                        <i data-lucide="printer"></i> Print
+                    </button>
+                    <button class="btn btn-secondary" style="flex: 1; justify-content: center;">
+                        <i data-lucide="download"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comments -->
+        <div class="card" style="margin: 0; border-radius: 8px;">
+            <div class="card-header" style="border-bottom: 1px solid var(--border); padding: 16px 24px;">
+                <h3 style="margin: 0; font-size: 14px; font-weight: 600; color: var(--ink);">Leave a Comment</h3>
+            </div>
+            <div class="card-body" style="padding: 16px 24px;">
+                <textarea id="commentBox" class="form-control" rows="3" placeholder="Add remarks, marginal notes, or instructions before proceeding..." style="width: 100%; margin-bottom: 12px; resize: vertical; border-radius: 6px;"></textarea>
+                <button class="btn btn-secondary" onclick="postComment()" style="width: 100%; justify-content: center;">
+                    <i data-lucide="message-square"></i> Post Comment
+                </button>
+            </div>
+        </div>
+
+        <!-- Document Tracer -->
         <div class="card" style="margin: 0; border-radius: 8px;">
             <div class="card-header" style="border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: center; gap: 8px;">
                 <i data-lucide="activity" style="width: 18px; height: 18px; color: var(--ink);"></i>
-                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: var(--ink);">Document Tracer</h3>
+                <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: var(--ink);">Audit Trail</h3>
             </div>
             <div class="card-body" style="padding: 24px;">
                 <div style="position: relative; padding-left: 20px;">
                     <!-- Line -->
                     <div style="position: absolute; left: 15px; top: 16px; bottom: 0; width: 2px; background: var(--border);"></div>
 
-                    <!-- Item 1 -->
-                    <div style="position: relative; padding-bottom: 24px; padding-left: 24px;">
-                        <div style="position: absolute; left: -16px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--brand); color: white; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: 700; border: 4px solid white; box-sizing: content-box;">RC</div>
-                        <div style="font-weight: 600; font-size: 13px; color: var(--ink);">Document Submitted</div>
-                        <div style="font-size: 12px; color: var(--ink-muted); margin-top: 4px;">Document registered and tracking number assigned.</div>
-                        <div style="font-size: 11px; color: var(--ink-muted); margin-top: 4px;">@Model.DateFiled.ToString("MMM dd, yyyy \u2014 h:mm tt")</div>
-                    </div>
-
-                    <!-- Item 2 -->
-                    <div style="position: relative; padding-bottom: 24px; padding-left: 24px;">
-                        <div style="position: absolute; left: -16px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--brand); color: white; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: 700; border: 4px solid white; box-sizing: content-box;">RC</div>
-                        <div style="font-weight: 600; font-size: 13px; color: var(--ink);">QR Code Generated</div>
-                        <div style="font-size: 12px; color: var(--ink-muted); margin-top: 4px;">QR code created for document tracking.</div>
-                        <div style="font-size: 11px; color: var(--ink-muted); margin-top: 4px;">@Model.DateFiled.ToString("MMM dd, yyyy \u2014 h:mm tt")</div>
-                    </div>
-
-                    <!-- Item 3 -->
-                    <div style="position: relative; padding-bottom: 24px; padding-left: 24px;">
-                        <div style="position: absolute; left: -16px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--brand); color: white; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: 700; border: 4px solid white; box-sizing: content-box;">SM</div>
-                        <div style="font-weight: 600; font-size: 13px; color: var(--ink);">SMS Notification Sent</div>
-                        <div style="font-size: 12px; color: var(--ink-muted); margin-top: 4px;">Status update sent to @Model.SubmittedBy (@Model.ContactNumber).</div>
-                        <div style="font-size: 11px; color: var(--ink-muted); margin-top: 4px;">@Model.DateFiled.ToString("MMM dd, yyyy \u2014 h:mm tt")</div>
-                    </div>
-
-                    <!-- Item 4 -->
-                    <div style="position: relative; padding-bottom: 0; padding-left: 24px;">
-                        <div style="position: absolute; left: -16px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--brand); color: white; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: 700; border: 4px solid white; box-sizing: content-box;">DH</div>
-                        <div style="font-weight: 600; font-size: 13px; color: var(--ink);">Endorsed by Dept. Head</div>
-                        <div style="font-size: 12px; color: var(--ink-muted); margin-top: 4px;">Document endorsed for processing by Dept Head — @(Model.OriginatingDepartment ?? "HRMO").</div>
-                        <div style="font-size: 11px; color: var(--ink-muted); margin-top: 4px;">@Model.DateFiled.AddDays(1).ToString("MMM dd, yyyy \u2014 h:mm tt")</div>
-                    </div>
+                    @if (Model.AuditTrailEntries != null && Model.AuditTrailEntries.Any())
+                    {
+                        @foreach (var entry in Model.AuditTrailEntries.OrderByDescending(a => a.Timestamp))
+                        {
+                            var initial = entry.User?.FullName != null && entry.User.FullName.Length >= 2 
+                                ? entry.User.FullName.Substring(0, 2).ToUpper() 
+                                : "SYS";
+                            <div style="position: relative; padding-bottom: 24px; padding-left: 24px;">
+                                <div style="position: absolute; left: -16px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--brand); color: white; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: 700; border: 4px solid white; box-sizing: content-box;">@initial</div>
+                                <div style="font-weight: 600; font-size: 13px; color: var(--ink);">@entry.Action</div>
+                                <div style="font-size: 12px; color: var(--ink-muted); margin-top: 4px;">@entry.Details</div>
+                                <div style="font-size: 11px; color: var(--ink-muted); margin-top: 4px;">@entry.Timestamp.ToString("MMM dd, yyyy \u2014 h:mm tt")</div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div style="font-size: 12px; color: var(--ink-muted); padding-left: 24px;">No tracking history yet.</div>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+
+@section Scripts {
+    <script>
+        function postComment() {
+            var comment = document.getElementById('commentBox').value;
+            if(!comment) return;
+            // TODO: AJAX to save comment
+            showToast('Comment added successfully!', 'success');
+            document.getElementById('commentBox').value = '';
+            // In a real implementation, we would prepend the comment to the tracer
+        }
+        function clearDocument() {
+            if(!confirm('Are you sure you want to clear this document and forward to the Mayor?')) return;
+            fetch('/Cart/Document/Clear', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'trackingNumber=' + encodeURIComponent('@Model.TrackingNumber')
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    showToast('Document cleared and forwarded to Mayor!', 'success');
+                    setTimeout(() => window.location.href = data.redirectUrl, 1500);
+                } else {
+                    showToast(data.message || 'Error processing document', 'error');
+                }
+            });
+        }
+        
+        function flagDocument() {
+            if(!confirm('Are you sure you want to flag this document for ARTA compliance issues?')) return;
+            fetch('/Cart/Document/FlagIssue', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'trackingNumber=' + encodeURIComponent('@Model.TrackingNumber')
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    showToast('Document flagged successfully.', 'warning');
+                    setTimeout(() => window.location.href = data.redirectUrl, 1500);
+                } else {
+                    showToast(data.message || 'Error processing document', 'error');
+                }
+            });
+        }
+    </script>
+}

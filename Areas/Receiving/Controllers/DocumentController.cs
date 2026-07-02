@@ -169,5 +169,37 @@ namespace TrackNGoMati.Areas.Receiving.Controllers
                 return Json(new { success = false, error = ex.Message });
             }
         }
+        [HttpPost]
+        public IActionResult Forward(string trackingNumber, string signatureData)
+        {
+            var doc = _context.Documents.FirstOrDefault(d => d.TrackingNumber == trackingNumber);
+            if (doc == null) return Json(new { success = false, message = "Document not found" });
+
+            if (doc.CurrentStepIndex != 1)
+                return Json(new { success = false, message = "Document is already forwarded." });
+
+            var userId = HttpContext.Session.GetInt32(SessionHelper.KEY_USER_ID) ?? 0;
+            
+            // FSM Transition to Dept Head (Step 2)
+            doc.CurrentStepIndex = 2;
+            doc.LastUpdated = DateTime.Now;
+
+            _context.AuditTrailEntries.Add(new AuditTrailEntry
+            {
+                DocumentId = doc.Id,
+                UserId = userId,
+                Action = "Forwarded to Dept Head",
+                Details = "Receiving clerk forwarded the document to the Department Head for review.",
+                Timestamp = DateTime.Now,
+                Ipaddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1"
+            });
+
+            _context.SaveChanges();
+            
+            if (!string.IsNullOrEmpty(doc.ContactNumber))
+                _sms.Send(doc.Id, doc.ContactNumber, doc.SubmittedBy, $"TrackNGo Mati: Your document ({trackingNumber}) was verified and forwarded to the Department Head.", "Forwarded");
+
+            return Json(new { success = true, redirectUrl = "/Receiving/Document" });
+        }
     }
 }

@@ -142,7 +142,22 @@
             <button class="modal-close" onclick="closeModal('registerModal')" style="color: white; background: transparent; border: none;"><i data-lucide="x" style="width: 18px; height: 18px;"></i></button>
         </div>
         <form method="post" action="/Receiving/Document/Register" enctype="multipart/form-data">
-            <div class="modal-body" style="padding: 24px;">
+            <div class="modal-body" style="padding: 24px;">                
+                <!-- File Upload & Auto OCR -->
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label" style="font-weight:600; font-size:12px; margin-bottom:4px;">Document File (PDF/Image)</label>
+                    <input type="file" class="form-control" name="Attachment" id="auto-ocr-file" accept=".jpg,.jpeg,.png,.pdf" required style="padding: 8px;" />
+                    
+                    <!-- OCR Loading & Preview Area -->
+                    <div id="ocr-loading" style="display:none; margin-top:12px; font-size:12px; color:var(--brand); align-items:center; gap:8px;">
+                        <i data-lucide="loader" style="width:16px;height:16px;animation:spin 1s linear infinite;"></i> Running Automatic OCR Scan...
+                    </div>
+                    <div id="ocr-preview" style="display:none; margin-top:12px; padding:12px; background:#EFF6FF; border:1px solid #BFDBFE; border-radius:6px; font-size:12px; color:var(--ink);">
+                        <strong><i data-lucide="scan-line" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> OCR Result:</strong>
+                        <div id="ocr-text" style="margin-top:8px; max-height:80px; overflow-y:auto; color:var(--ink-muted); font-style:italic;"></div>
+                    </div>
+                </div>
+
                 <div class="form-row" style="margin-bottom: 16px;">
                     <div class="form-group" style="flex:1;">
                         <select class="form-control" name="TypeId" required style="height: 40px;">
@@ -262,55 +277,45 @@
 </div>
 
 <!-- OCR Scan Modal -->
-<div class="modal-overlay" id="ocrModal">
-    <div class="modal modal-lg animate-fade-in">
-        <div class="modal-header">
-            <h3 class="modal-title"><i data-lucide="scan" style="width:18px;height:18px;display:inline;vertical-align:middle;margin-right:6px;"></i> OCR Document Scan</h3>
-            <button class="modal-close" onclick="closeModal('ocrModal')"><i data-lucide="x"></i></button>
-        </div>
-        <div class="modal-body">
-            <p class="text-meta" style="margin-bottom:16px;">
-                Upload a scanned document image (JPG/PNG). The OCR engine will extract text and pre-fill the registration form.
-            </p>
-            <div class="form-group">
-                <label class="form-label form-label-required">Scanned Document Image</label>
-                <input type="file" class="form-control" id="ocr-file" accept=".jpg,.jpeg,.png,.bmp,.tiff" />
-            </div>
-            <div id="ocr-progress" style="display:none; margin-top:12px; text-align:center; color:var(--brand);">
-                <i data-lucide="loader" style="width:20px;height:20px;animation:spin 1s linear infinite;"></i>
-                <span style="margin-left:8px;">Extracting text...</span>
-            </div>
-            <div id="ocr-result" style="display:none; margin-top:16px;">
-                <div class="card" style="margin-bottom:0;">
-                    <div class="card-header"><span class="card-header-title">Extracted Information</span></div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label class="form-label">Detected Subject</label>
-                            <input type="text" class="form-control" id="ocr-subject" readonly />
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Raw OCR Text</label>
-                            <textarea class="form-control" id="ocr-raw" rows="5" readonly></textarea>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="closeModal('ocrModal')">Close</button>
-            <button type="button" class="btn btn-primary" onclick="runOcr()">
-                <i data-lucide="scan"></i> Extract Text
-            </button>
-            <button type="button" class="btn btn-secondary" id="ocr-use-btn" style="display:none;"
-                    onclick="useOcrData()">
-                <i data-lucide="file-plus"></i> Use in Registration Form
-            </button>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
     <script>
+        document.getElementById('auto-ocr-file').addEventListener('change', function(e) {
+            var file = e.target.files[0];
+            if (!file) return;
+            
+            document.getElementById('ocr-loading').style.display = 'flex';
+            document.getElementById('ocr-preview').style.display = 'none';
+            
+            var formData = new FormData();
+            formData.append('file', file);
+            
+            fetch('/Receiving/Document/OcrExtract', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('ocr-loading').style.display = 'none';
+                if(data.success) {
+                    document.getElementById('ocr-preview').style.display = 'block';
+                    document.getElementById('ocr-text').innerText = data.rawText;
+                    
+                    // Auto-fill Title if empty
+                    var titleInput = document.getElementById('reg-title');
+                    if (titleInput && !titleInput.value && data.subject) {
+                        titleInput.value = data.subject;
+                        showToast('Title auto-filled from OCR!', 'success');
+                    }
+                } else {
+                    showToast('OCR Failed: ' + data.message, 'error');
+                }
+            })
+            .catch(err => {
+                document.getElementById('ocr-loading').style.display = 'none';
+                showToast('OCR Error: Network issue.', 'error');
+            });
+        });
+
         var _ocrFields = {};
 
         function runOcr() {
@@ -357,7 +362,22 @@
         <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">
             <button class="modal-close" style="position: absolute; right: 16px; top: 16px;" onclick="closeModal('qrModal')"><i data-lucide="x"></i></button>
         </div>
-        <div class="modal-body" style="padding: 24px;">
+        <div class="modal-body" style="padding: 24px;">                
+                <!-- File Upload & Auto OCR -->
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label class="form-label" style="font-weight:600; font-size:12px; margin-bottom:4px;">Document File (PDF/Image)</label>
+                    <input type="file" class="form-control" name="Attachment" id="auto-ocr-file" accept=".jpg,.jpeg,.png,.pdf" required style="padding: 8px;" />
+                    
+                    <!-- OCR Loading & Preview Area -->
+                    <div id="ocr-loading" style="display:none; margin-top:12px; font-size:12px; color:var(--brand); align-items:center; gap:8px;">
+                        <i data-lucide="loader" style="width:16px;height:16px;animation:spin 1s linear infinite;"></i> Running Automatic OCR Scan...
+                    </div>
+                    <div id="ocr-preview" style="display:none; margin-top:12px; padding:12px; background:#EFF6FF; border:1px solid #BFDBFE; border-radius:6px; font-size:12px; color:var(--ink);">
+                        <strong><i data-lucide="scan-line" style="width:14px;height:14px;display:inline-block;vertical-align:middle;"></i> OCR Result:</strong>
+                        <div id="ocr-text" style="margin-top:8px; max-height:80px; overflow-y:auto; color:var(--ink-muted); font-style:italic;"></div>
+                    </div>
+                </div>
+
             <h3 style="margin-bottom: 8px; font-weight: 600; font-size: 18px; color: var(--ink);" id="qrDocTitle">Document Title</h3>
             <p style="color: var(--ink-muted); font-size: 13px; margin-bottom: 24px;" id="qrDocRef">REF NO.</p>
             

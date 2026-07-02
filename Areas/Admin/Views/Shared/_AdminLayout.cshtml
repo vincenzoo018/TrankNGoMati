@@ -20,7 +20,7 @@
         <button class="topbar-btn" onclick="toggleSidebar()" title="Menu" style="margin-right:auto;"><i data-lucide="menu"></i></button>
         <button class="topbar-btn" title="Notifications"><i data-lucide="bell"></i><span class="topbar-badge"></span></button>
         <span class="topbar-separator"></span>
-        <a href="/" class="topbar-btn" title="Logout"><i data-lucide="log-out"></i></a>
+        <a href="/Account/Logout" class="topbar-btn" title="Logout"><i data-lucide="log-out"></i></a>
     </header>
 
     <nav class="sidebar" id="sidebar">
@@ -33,18 +33,16 @@
         </div>
         <div class="sidebar-role" id="current-role-label">Executive Admin</div>
         
-        <div class="sidebar-nav">
-            <a href="/Admin/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")">
-                <i data-lucide="layout-dashboard"></i> Dashboard
-            </a>
-            <a href="/Admin/Document" class="sidebar-nav-item @(currentPage == "Document" ? "active" : "")">
-                <i data-lucide="file-text"></i> Documents
-            </a>
-            <a href="/Admin/UserManagement" class="sidebar-nav-item @(currentPage == "UserManagement" ? "active" : "")">
-                <i data-lucide="users"></i> User Management
-            </a>
-            <a href="/Admin/Reports" class="sidebar-nav-item @(currentPage == "Reports" ? "active" : "")">
-                <i data-lucide="bar-chart-3"></i> Reports
+                <div class="sidebar-nav">
+            <a href="/Admin/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+            <a href="/Admin/Document" class="sidebar-nav-item @(currentPage == "Document" ? "active" : "")"><i data-lucide="file-text"></i> All Documents</a>
+            <a href="/Admin/Users" class="sidebar-nav-item @(currentPage == "Users" ? "active" : "")"><i data-lucide="users"></i> User Management</a>
+            <a href="/Admin/Archive" class="sidebar-nav-item @(currentPage == "Archive" ? "active" : "")"><i data-lucide="archive"></i> Archive</a>
+            <a href="/Admin/Settings" class="sidebar-nav-item @(currentPage == "Settings" ? "active" : "")"><i data-lucide="settings"></i> System Settings</a>
+        </div>
+<div style="margin-top: auto; padding: 24px; padding-bottom: 32px;">
+            <a href="/Account/Logout" class="btn btn-secondary" style="width: 100%; border-color: var(--border); color: #EF4444; justify-content: center;">
+                <i data-lucide="log-out"></i> Sign Out
             </a>
         </div>
     </nav>

@@ -1,4 +1,9 @@
-@model TrackNGoMati.Models.Document
+import os
+
+base_dir = 'c:/Users/Huawei/source/repos/TrackNGoMati/Areas'
+roles = ['Admin', 'Cart', 'DepartmentHead', 'Mayor', 'Receiving']
+
+template = """@model TrackNGoMati.Models.Document
 @{
     ViewData["Title"] = "Document Details";
 }
@@ -10,7 +15,7 @@
         <p class="page-subtitle" style="font-size: 14px;">@Model.Title — @Model.SubmittedBy</p>
     </div>
     <div class="page-header-right">
-        <a href="/Mayor/Document" class="btn btn-secondary" style="padding: 8px 16px; border-color:var(--border);">
+        <a href="/{{ROLE}}/Document" class="btn btn-secondary" style="padding: 8px 16px; border-color:var(--border);">
             <i data-lucide="arrow-left"></i> Back to List
         </a>
     </div>
@@ -119,12 +124,7 @@
                 <h3 style="margin: 0; font-size: 16px; font-weight: 600; color: var(--ink);"><i data-lucide="zap" style="width: 16px; height: 16px; display:inline-block; vertical-align:middle; margin-right:6px; color: #F59E0B;"></i> Actions</h3>
             </div>
             <div class="card-body" style="padding: 16px 24px; display: flex; flex-direction: column; gap: 12px;">
-                <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="openModal('signatureModal')">
-                    <i data-lucide="pen-tool"></i> Sign &amp; Approve
-                </button>
-                <button class="btn" style="width: 100%; justify-content: center; border: 1px solid #EF4444; color: #EF4444; background: white;">
-                    <i data-lucide="undo-2"></i> Return Document
-                </button>
+{{ACTIONS_HTML}}
                 <div style="display: flex; gap: 12px; margin-top: 8px;">
                     <button class="btn btn-secondary" onclick="window.print()" style="flex: 1; justify-content: center;">
                         <i data-lucide="printer"></i> Print
@@ -171,7 +171,7 @@
                                 <div style="position: absolute; left: -16px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--brand); color: white; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: 700; border: 4px solid white; box-sizing: content-box;">@initial</div>
                                 <div style="font-weight: 600; font-size: 13px; color: var(--ink);">@entry.Action</div>
                                 <div style="font-size: 12px; color: var(--ink-muted); margin-top: 4px;">@entry.Details</div>
-                                <div style="font-size: 11px; color: var(--ink-muted); margin-top: 4px;">@entry.Timestamp.ToString("MMM dd, yyyy \u2014 h:mm tt")</div>
+                                <div style="font-size: 11px; color: var(--ink-muted); margin-top: 4px;">@entry.Timestamp.ToString("MMM dd, yyyy \\u2014 h:mm tt")</div>
                             </div>
                         }
                     }
@@ -185,7 +185,53 @@
     </div>
 </div>
 
-<!-- Signature Modal -->
+{{MODALS_HTML}}
+
+@section Scripts {
+    <script>
+        function postComment() {
+            var comment = document.getElementById('commentBox').value;
+            if(!comment) return;
+            // TODO: AJAX to save comment
+            showToast('Comment added successfully!', 'success');
+            document.getElementById('commentBox').value = '';
+            // In a real implementation, we would prepend the comment to the tracer
+        }
+{{JS_HTML}}
+    </script>
+}
+"""
+
+actions = {
+    'Receiving': '''                <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="openModal('signatureModal')">
+                    <i data-lucide="corner-up-right"></i> Forward to Dept Head
+                </button>''',
+                
+    'DepartmentHead': '''                <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="openModal('signatureModal')">
+                    <i data-lucide="pen-tool"></i> Sign &amp; Endorse
+                </button>
+                <button class="btn" style="width: 100%; justify-content: center; border: 1px solid #EF4444; color: #EF4444; background: white;">
+                    <i data-lucide="undo-2"></i> Return Document
+                </button>''',
+                
+    'Cart': '''                <button class="btn btn-primary" onclick="clearDocument()" style="width: 100%; justify-content: center;">
+                    <i data-lucide="check-circle"></i> Clear Document
+                </button>
+                <button class="btn" onclick="flagDocument()" style="width: 100%; justify-content: center; border: 1px solid #F59E0B; color: #F59E0B; background: white;">
+                    <i data-lucide="flag"></i> Flag ARTA Issue
+                </button>''',
+                
+    'Mayor': '''                <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="openModal('signatureModal')">
+                    <i data-lucide="pen-tool"></i> Sign &amp; Approve
+                </button>
+                <button class="btn" style="width: 100%; justify-content: center; border: 1px solid #EF4444; color: #EF4444; background: white;">
+                    <i data-lucide="undo-2"></i> Return Document
+                </button>''',
+                
+    'Admin': '''                <div style="font-size: 12px; color: var(--ink-muted); text-align: center;">No administrative workflow actions available.</div>'''
+}
+
+signature_modal = '''<!-- Signature Modal -->
 <div class="modal-overlay" id="signatureModal">
     <div class="modal animate-fade-in" style="max-width: 500px;">
         <div class="modal-header">
@@ -211,19 +257,9 @@
             </button>
         </div>
     </div>
-</div>
+</div>'''
 
-@section Scripts {
-    <script>
-        function postComment() {
-            var comment = document.getElementById('commentBox').value;
-            if(!comment) return;
-            // TODO: AJAX to save comment
-            showToast('Comment added successfully!', 'success');
-            document.getElementById('commentBox').value = '';
-            // In a real implementation, we would prepend the comment to the tracer
-        }
-        var canvas = document.getElementById('sigCanvas');
+signature_js = '''        var canvas = document.getElementById('sigCanvas');
         if(canvas) {
             var ctx = canvas.getContext('2d');
             ctx.strokeStyle = '#0F172A';
@@ -269,7 +305,7 @@
         function submitSignature() {
             var signatureData = canvas.toDataURL();
             
-            fetch('/Mayor/Document/Approve', {
+            fetch('/{{ROLE}}/Document/{{POST_ACTION}}', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: 'trackingNumber=' + encodeURIComponent('@Model.TrackingNumber') + '&signatureData=' + encodeURIComponent(signatureData)
@@ -284,6 +320,63 @@
                 }
             })
             .catch(err => showToast('Network error occurred.', 'error'));
+        }'''
+
+cart_js = '''        function clearDocument() {
+            if(!confirm('Are you sure you want to clear this document and forward to the Mayor?')) return;
+            fetch('/Cart/Document/Clear', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'trackingNumber=' + encodeURIComponent('@Model.TrackingNumber')
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    showToast('Document cleared and forwarded to Mayor!', 'success');
+                    setTimeout(() => window.location.href = data.redirectUrl, 1500);
+                } else {
+                    showToast(data.message || 'Error processing document', 'error');
+                }
+            });
         }
-    </script>
-}
+        
+        function flagDocument() {
+            if(!confirm('Are you sure you want to flag this document for ARTA compliance issues?')) return;
+            fetch('/Cart/Document/FlagIssue', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'trackingNumber=' + encodeURIComponent('@Model.TrackingNumber')
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    showToast('Document flagged successfully.', 'warning');
+                    setTimeout(() => window.location.href = data.redirectUrl, 1500);
+                } else {
+                    showToast(data.message || 'Error processing document', 'error');
+                }
+            });
+        }'''
+
+for role in roles:
+    final_html = template.replace('{{ROLE}}', role)
+    final_html = final_html.replace('{{ACTIONS_HTML}}', actions.get(role, ''))
+    
+    if role in ['Receiving', 'DepartmentHead', 'Mayor']:
+        final_html = final_html.replace('{{MODALS_HTML}}', signature_modal)
+        post_act = 'Forward' if role == 'Receiving' else 'Endorse' if role == 'DepartmentHead' else 'Approve'
+        js = signature_js.replace('{{ROLE}}', role).replace('{{POST_ACTION}}', post_act)
+        final_html = final_html.replace('{{JS_HTML}}', js)
+    elif role == 'Cart':
+        final_html = final_html.replace('{{MODALS_HTML}}', '')
+        final_html = final_html.replace('{{JS_HTML}}', cart_js)
+    else:
+        final_html = final_html.replace('{{MODALS_HTML}}', '')
+        final_html = final_html.replace('{{JS_HTML}}', '')
+        
+    out_path = f'{base_dir}/{role}/Views/Document/Details.cshtml'
+    if os.path.exists(os.path.dirname(out_path)):
+        with open(out_path, 'w', encoding='utf-8') as f:
+            f.write(final_html)
+
+print("Generated all Details views.")

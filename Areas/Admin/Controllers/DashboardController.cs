@@ -17,17 +17,35 @@ namespace TrackNGoMati.Areas.Admin.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+                public IActionResult Index()
         {
             ViewData["Title"] = "Admin Dashboard";
             ViewBag.CurrentPage = "Dashboard";
 
-            ViewBag.TotalUsers = _context.Users.Count();
-            ViewBag.TotalDepts = _context.Departments.Count();
-            ViewBag.TotalDocs = _context.Documents.Count();
-            ViewBag.ActiveUsers = _context.Users.Count(u => u.IsActive);
+            var docs = _context.Documents.ToList();
+            
+            ViewBag.TotalDocs = docs.Count;
+            ViewBag.PendingDocs = docs.Count(d => d.CurrentStatus == 1 || d.CurrentStatus == 2);
+            ViewBag.CompletedDocs = docs.Count(d => d.CurrentStatus == 3);
+            
+            var today = System.DateTime.Now;
+            var overdue = docs.Where(d => d.CurrentStatus != 3 && (today - d.DateFiled).TotalDays > d.ArtaprocessingDays).ToList();
+            ViewBag.OverdueDocs = overdue;
+
+            if (-1 > 0) {
+                ViewBag.ActionNeeded = docs.Where(d => d.CurrentStepIndex == -1 && d.CurrentStatus != 3).ToList();
+            } else {
+                ViewBag.ActionNeeded = new List<Document>(); // Admin sees all or none
+            }
+
+            // Funnel data
+            ViewBag.Step1Count = docs.Count(d => d.CurrentStepIndex == 1 && d.CurrentStatus != 3);
+            ViewBag.Step2Count = docs.Count(d => d.CurrentStepIndex == 2 && d.CurrentStatus != 3);
+            ViewBag.Step3Count = docs.Count(d => d.CurrentStepIndex == 3 && d.CurrentStatus != 3);
+            ViewBag.Step4Count = docs.Count(d => d.CurrentStepIndex == 4 && d.CurrentStatus != 3);
 
             return View();
         }
     }
 }
+

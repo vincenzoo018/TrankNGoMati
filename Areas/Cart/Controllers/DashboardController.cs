@@ -18,24 +18,35 @@ namespace TrackNGoMati.Areas.Cart.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+                public IActionResult Index()
         {
-            ViewData["Title"] = "CART Dashboard";
+            ViewData["Title"] = "Cart Dashboard";
             ViewBag.CurrentPage = "Dashboard";
 
-            var now = DateTime.Now;
+            var docs = _context.Documents.ToList();
             
-            // Need to calculate which ones are overdue
-            // Since we can't easily do it in EF without complex DATEDIFF, let's pull all non-completed docs
-            var docs = _context.Documents.Where(d => d.CurrentStatus != 3 && d.CurrentStatus != 4).ToList();
+            ViewBag.TotalDocs = docs.Count;
+            ViewBag.PendingDocs = docs.Count(d => d.CurrentStatus == 1 || d.CurrentStatus == 2);
+            ViewBag.CompletedDocs = docs.Count(d => d.CurrentStatus == 3);
             
-            int overdueCount = docs.Count(d => (now - d.DateFiled).TotalDays > d.ArtaprocessingDays);
+            var today = System.DateTime.Now;
+            var overdue = docs.Where(d => d.CurrentStatus != 3 && (today - d.DateFiled).TotalDays > d.ArtaprocessingDays).ToList();
+            ViewBag.OverdueDocs = overdue;
 
-            ViewBag.TotalEscalations = _context.EscalationLogs.Count();
-            ViewBag.ActiveEscalations = _context.EscalationLogs.Count(e => !e.IsResolved);
-            ViewBag.OverdueDocs = overdueCount;
+            if (3 > 0) {
+                ViewBag.ActionNeeded = docs.Where(d => d.CurrentStepIndex == 3 && d.CurrentStatus != 3).ToList();
+            } else {
+                ViewBag.ActionNeeded = new List<Document>(); // Admin sees all or none
+            }
+
+            // Funnel data
+            ViewBag.Step1Count = docs.Count(d => d.CurrentStepIndex == 1 && d.CurrentStatus != 3);
+            ViewBag.Step2Count = docs.Count(d => d.CurrentStepIndex == 2 && d.CurrentStatus != 3);
+            ViewBag.Step3Count = docs.Count(d => d.CurrentStepIndex == 3 && d.CurrentStatus != 3);
+            ViewBag.Step4Count = docs.Count(d => d.CurrentStepIndex == 4 && d.CurrentStatus != 3);
 
             return View();
         }
     }
 }
+

@@ -9,6 +9,33 @@
     </div>
 </div>
 
+@if (ViewBag.OverdueDocs != null && ((IEnumerable<TrackNGoMati.Models.Document>)ViewBag.OverdueDocs).Any())
+{
+    <div class="animate-fade-in" style="background-color: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 8px; padding: 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 16px;">
+        <div style="background: #FEE2E2; color: #DC2626; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="alert-triangle"></i>
+        </div>
+        <div style="flex: 1;">
+            <h4 style="margin: 0; color: #991B1B; font-size: 14px; font-weight: 700;">SLA Breach Alert</h4>
+            <p style="margin: 0; color: #B91C1C; font-size: 12px; margin-top: 4px;">There are <strong>@(((IEnumerable<TrackNGoMati.Models.Document>)ViewBag.OverdueDocs).Count())</strong> documents that have exceeded their ARTA processing SLA.</p>
+        </div>
+        <a href="/DepartmentHead/Document" class="btn" style="background: white; border: 1px solid #FCA5A5; color: #DC2626;">View Overdue</a>
+    </div>
+}
+
+@if (ViewBag.ActionNeeded != null && ((IEnumerable<TrackNGoMati.Models.Document>)ViewBag.ActionNeeded).Any())
+{
+    <div class="animate-fade-in" style="background-color: #F0FDF4; border: 1px solid #86EFAC; border-radius: 8px; padding: 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 16px;">
+        <div style="background: #DCFCE7; color: #16A34A; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+            <i data-lucide="inbox"></i>
+        </div>
+        <div style="flex: 1;">
+            <h4 style="margin: 0; color: #166534; font-size: 14px; font-weight: 700;">Action Required</h4>
+            <p style="margin: 0; color: #15803D; font-size: 12px; margin-top: 4px;">You have <strong>@(((IEnumerable<TrackNGoMati.Models.Document>)ViewBag.ActionNeeded).Count())</strong> documents pending your review and signature.</p>
+        </div>
+        <a href="/DepartmentHead/Document" class="btn" style="background: white; border: 1px solid #86EFAC; color: #16A34A;">Go to Inbox</a>
+    </div>
+}
 <div class="filter-bar animate-fade-in" style="justify-content: space-between; display: flex; width: 100%;">
     <div style="display:flex; gap:12px; align-items:center;">
         <select class="filter-select"><option>May 1, 2026 — May 29, 2026</option></select>
@@ -60,7 +87,7 @@
 <div class="form-row animate-fade-in">
     <div class="card">
         <div class="card-header" style="border:none; padding-bottom:0;">
-            <span class="card-header-title" style="font-size:14px;">Documents Filed Per Week — May 2026</span>
+            <span class="card-header-title" style="font-size:14px;">Active Bottlenecks (Documents per Stage)</span>
         </div>
         <div class="card-body">
             <canvas id="barChart" height="200"></canvas>
@@ -140,47 +167,30 @@
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            var ctxBar = document.getElementById('barChart').getContext('2d');
+                        var ctxBar = document.getElementById('barChart').getContext('2d');
             new Chart(ctxBar, {
                 type: 'bar',
                 data: {
-                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    labels: ['Receiving', 'Dept Head', 'CART', 'Mayor'],
                     datasets: [{
-                        label: 'Documents',
-                        data: [78, 84, 91, 59],
-                        backgroundColor: '#1A56DB',
+                        label: 'Documents Stuck',
+                        data: [@ViewBag.Step1Count, @ViewBag.Step2Count, @ViewBag.Step3Count, @ViewBag.Step4Count],
+                        backgroundColor: ['#1A56DB', '#3B82F6', '#60A5FA', '#93C5FD'],
                         borderRadius: 4
                     }]
                 },
                 options: {
+                    indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        y: { beginAtZero: true, grid: { display: false }, border: { display: false } },
-                        x: { grid: { display: false }, border: { display: false } }
+                        y: { grid: { display: false }, border: { display: false } },
+                        x: { beginAtZero: true, grid: { display: false }, border: { display: false } }
                     }
-                }
-            });
-
-            var ctxDonut = document.getElementById('donutChart').getContext('2d');
-            new Chart(ctxDonut, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Completed', 'In Progress', 'Returned'],
-                    datasets: [{
-                        data: [79, 13, 8],
-                        backgroundColor: ['#1A56DB', '#60A5FA', '#BFDBFE'],
-                        borderWidth: 0,
-                        cutout: '75%'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } }
                 }
             });
         });
     </script>
 }
+

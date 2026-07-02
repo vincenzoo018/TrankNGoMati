@@ -1,26 +1,23 @@
-@{
-    var currentPage = ViewBag.CurrentPage as string ?? "Dashboard";
-    var departments = ViewBag.SidebarDepartments as IEnumerable<TrackNGoMati.Models.Department>;
-}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] — TrackNGo Mati (Admin)</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    
-    <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="~/css/admin.css" />
-</head>
-<body>
+$areas = @("Admin", "Cart", "DepartmentHead", "Mayor", "Receiving")
+
+foreach ($area in $areas) {
+    $layoutPath = "c:\Users\Huawei\source\repos\TrankNGoMati\Areas\$area\Views\Shared\_$($area)Layout.cshtml"
+    if (Test-Path $layoutPath) {
+        $content = Get-Content -Path $layoutPath -Raw
+
+        # 1. Update Topbar
+        $oldTopbar = '    <header class="topbar">
+        <button class="topbar-btn" onclick="toggleSidebar()" title="Menu" style="margin-right:auto;"><i data-lucide="menu"></i></button>
+        <button class="topbar-btn" title="Notifications"><i data-lucide="bell"></i><span class="topbar-badge"></span></button>
+        <span class="topbar-separator"></span>
+        <a href="/Account/Logout" class="topbar-btn" title="Logout"><i data-lucide="log-out"></i></a>
+    </header>'
+
+        $newTopbar = @"
     <header class="topbar" style="position:relative;">
         <button class="topbar-btn" onclick="toggleSidebar()" title="Menu"><i data-lucide="menu"></i></button>
         
-        <form action="/Admin/Document" method="get" class="topbar-search" style="margin-right:auto; margin-left:24px; display:flex; align-items:center;">
+        <form action="/$area/Document" method="get" class="topbar-search" style="margin-right:auto; margin-left:24px; display:flex; align-items:center;">
             <div class="search-input" style="width: 400px; position:relative;">
                 <i data-lucide="search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:var(--ink-muted);"></i>
                 <input type="text" name="search" placeholder="Search by tracking number or keyword..." style="padding-left:36px; height:36px; border-radius:18px; border:1px solid var(--border); width:100%; font-size:13px; background:#f8fafc;" />
@@ -45,60 +42,15 @@
         <span class="topbar-separator"></span>
         <a href="/Account/Logout" class="topbar-btn" title="Logout"><i data-lucide="log-out"></i></a>
     </header>
-
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <div class="sidebar-logo-icon">A</div>
-            <div class="sidebar-logo-text">
-                <span class="sidebar-logo-title">System Admin</span>
-                <span class="sidebar-logo-sub">TrackNGo Mati</span>
-            </div>
-        </div>
-        <div class="sidebar-role" id="current-role-label">Executive Admin</div>
+"@
         
-        <div class="sidebar-nav">
-            <a href="/Admin/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")"><i data-lucide="layout-dashboard"></i> Dashboard</a>
-            <a href="/Admin/Document" class="sidebar-nav-item @(currentPage == "Document" ? "active" : "")"><i data-lucide="file-text"></i> My Documents</a>
-            <a href="/Admin/AuditTrail" class="sidebar-nav-item @(currentPage == "AuditTrail" ? "active" : "")"><i data-lucide="activity"></i> Audit Trail</a>
-            <a href="/Admin/Reports" class="sidebar-nav-item @(currentPage == "Reports" ? "active" : "")"><i data-lucide="file-bar-chart"></i> Reports</a>
-            <a href="/Admin/UserManagement" class="sidebar-nav-item @(currentPage == "Users" ? "active" : "")"><i data-lucide="users"></i> User Management</a>
-            <a href="/Admin/Archive" class="sidebar-nav-item @(currentPage == "Archive" ? "active" : "")"><i data-lucide="archive"></i> Archived</a>
-        </div>
-
-        @if (departments != null && departments.Any())
-        {
-            <div style="padding: 0 24px; margin-top: 16px;">
-                <div style="font-size: 10px; font-weight: 700; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Departments</div>
-            </div>
-            <div class="sidebar-nav" style="padding-top: 0;">
-                @foreach (var dept in departments)
-                {
-                    <a href="/Admin/Document?department=@dept.Id" class="sidebar-nav-item" style="font-size: 13px;">
-                        <span style="display:inline-block; width:8px; height:8px; border-radius:2px; background:var(--brand); margin-right:8px; flex-shrink:0;"></span>
-                        @dept.DepartmentName
-                    </a>
-                }
-            </div>
+        if ($content -match '<header class="topbar">') {
+            # Need to match the block properly
+            $content = $content -replace '(?s)\s*<header class="topbar">.*?</header>', "`n$newTopbar"
         }
 
-        <div style="margin-top: auto; padding: 24px; padding-bottom: 32px;">
-            <a href="/Account/Logout" class="btn btn-secondary" style="width: 100%; border-color: var(--border); color: #EF4444; justify-content: center;">
-                <i data-lucide="log-out"></i> Sign Out
-            </a>
-        </div>
-    </nav>
-
-    <main class="main-content">
-        @RenderBody()
-    </main>
-
-    <div id="toast-container" class="toast-container"></div>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="~/js/site.js"></script>
-    <script src="~/js/admin.js"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+        # 2. Add Notification Javascript before </body>
+        $notifScript = @"
     <script>
         function toggleNotifications() {
             var dd = document.getElementById('notifDropdown');
@@ -117,7 +69,7 @@
             badge.style.display = 'block';
             badge.innerText = '2';
             
-            document.getElementById('notifList').innerHTML = 
+            document.getElementById('notifList').innerHTML = `
                 <a href="#" style="display:block; padding:12px 16px; border-bottom:1px solid var(--border); text-decoration:none; transition:background 0.2s;">
                     <div style="font-size:12px; font-weight:600; color:var(--ink); margin-bottom:4px;">Document Flagged</div>
                     <div style="font-size:11px; color:var(--ink-muted);">TNG-2026-0004 has been flagged by CART.</div>
@@ -128,7 +80,7 @@
                     <div style="font-size:11px; color:var(--ink-muted);">TNG-2026-0001 is nearing its ARTA deadline.</div>
                     <div style="font-size:10px; color:var(--brand); margin-top:6px;">1 hr ago</div>
                 </a>
-            ;
+            `;
         }
         function markAllRead() {
             document.getElementById('notifBadge').style.display = 'none';
@@ -140,5 +92,11 @@
         setTimeout(loadNotifications, 1000);
     </script>
 </body>
-</html>
+"@
+        
+        $content = $content -replace '</body>', $notifScript
 
+        Set-Content -Path $layoutPath -Value $content
+        Write-Host "Updated layout for $area"
+    }
+}

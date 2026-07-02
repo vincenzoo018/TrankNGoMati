@@ -17,27 +17,35 @@ namespace TrackNGoMati.Areas.DepartmentHead.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+                public IActionResult Index()
         {
-            ViewData["Title"] = "Department Head Dashboard";
+            ViewData["Title"] = "DepartmentHead Dashboard";
             ViewBag.CurrentPage = "Dashboard";
 
-            var userId = HttpContext.Session.GetInt32(SessionHelper.KEY_USER_ID);
-            var user = userId != null ? _context.Users.Find(userId) : null;
-            var deptId = user?.DepartmentId;
-
-            var query = _context.Documents.AsQueryable();
+            var docs = _context.Documents.ToList();
             
-            if (deptId != null)
-            {
-                query = query.Where(d => d.DepartmentId == deptId);
+            ViewBag.TotalDocs = docs.Count;
+            ViewBag.PendingDocs = docs.Count(d => d.CurrentStatus == 1 || d.CurrentStatus == 2);
+            ViewBag.CompletedDocs = docs.Count(d => d.CurrentStatus == 3);
+            
+            var today = System.DateTime.Now;
+            var overdue = docs.Where(d => d.CurrentStatus != 3 && (today - d.DateFiled).TotalDays > d.ArtaprocessingDays).ToList();
+            ViewBag.OverdueDocs = overdue;
+
+            if (2 > 0) {
+                ViewBag.ActionNeeded = docs.Where(d => d.CurrentStepIndex == 2 && d.CurrentStatus != 3).ToList();
+            } else {
+                ViewBag.ActionNeeded = new List<Document>(); // Admin sees all or none
             }
 
-            ViewBag.TotalDeptDocs = query.Count();
-            ViewBag.PendingReview = query.Count(d => d.CurrentStatus == 1);
-            ViewBag.Endorsed = query.Count(d => d.CurrentStatus > 1);
+            // Funnel data
+            ViewBag.Step1Count = docs.Count(d => d.CurrentStepIndex == 1 && d.CurrentStatus != 3);
+            ViewBag.Step2Count = docs.Count(d => d.CurrentStepIndex == 2 && d.CurrentStatus != 3);
+            ViewBag.Step3Count = docs.Count(d => d.CurrentStepIndex == 3 && d.CurrentStatus != 3);
+            ViewBag.Step4Count = docs.Count(d => d.CurrentStepIndex == 4 && d.CurrentStatus != 3);
 
             return View();
         }
     }
 }
+

@@ -43,6 +43,8 @@ public partial class TrackNgoDbContext : DbContext
 
     public virtual DbSet<Smsnotification> Smsnotifications { get; set; }
 
+    public virtual DbSet<SystemNotification> SystemNotifications { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<WorkflowStep> WorkflowSteps { get; set; }

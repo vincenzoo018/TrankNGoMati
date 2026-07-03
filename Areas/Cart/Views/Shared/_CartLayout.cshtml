@@ -43,6 +43,8 @@
         </div>
         
         <span class="topbar-separator"></span>
+        <a href="/Profile" class="topbar-btn" title="Settings"><i data-lucide="settings"></i></a>
+        <a href="/Calendar" class="topbar-btn" title="Calendar Deadlines"><i data-lucide="calendar"></i></a>
         <a href="/Account/Logout" class="topbar-btn" title="Logout"><i data-lucide="log-out"></i></a>
     </header>
 
@@ -59,6 +61,7 @@
         <div class="sidebar-nav">
             <a href="/Cart/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")"><i data-lucide="layout-dashboard"></i> Dashboard</a>
             <a href="/Cart/Document" class="sidebar-nav-item @(currentPage == "Document" ? "active" : "")"><i data-lucide="shield-check"></i> ARTA Monitoring</a>
+            <a href="/Cart/RoutingSlip" class="sidebar-nav-item @(currentPage == "RoutingSlip" ? "active" : "")"><i data-lucide="map"></i> Routing Slips</a>
             <a href="/Cart/ARTAEscalations" class="sidebar-nav-item @(currentPage == "Escalations" ? "active" : "")"><i data-lucide="alert-circle"></i> Escalations</a>
             <a href="/Cart/AuditTrail" class="sidebar-nav-item @(currentPage == "AuditTrail" ? "active" : "")"><i data-lucide="activity"></i> Audit Trail</a>
             <a href="/Cart/Notification" class="sidebar-nav-item @(currentPage == "Notification" ? "active" : "")"><i data-lucide="bell"></i> Notifications</a>
@@ -83,7 +86,9 @@
         }
 
         <div style="margin-top: auto; padding: 24px; padding-bottom: 32px;">
-            <a href="/Account/Logout" class="btn btn-secondary" style="width: 100%; border-color: var(--border); color: #EF4444; justify-content: center;">
+            <a href="/Profile" class="topbar-btn" title="Settings"><i data-lucide="settings"></i></a>
+        <a href="/Calendar" class="topbar-btn" title="Calendar Deadlines"><i data-lucide="calendar"></i></a>
+        <a href="/Account/Logout" class="btn btn-secondary" style="width: 100%; border-color: var(--border); color: #EF4444; justify-content: center;">
                 <i data-lucide="log-out"></i> Sign Out
             </a>
         </div>

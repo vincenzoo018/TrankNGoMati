@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace TrackNGoMati.Models;
@@ -18,6 +18,8 @@ public partial class DocumentMetadata
     public string? ReportNumber { get; set; }
 
     public string? CategoryFlags { get; set; }
+
+    public string? ExtractedText { get; set; }
 
     public virtual Document Document { get; set; } = null!;
 }

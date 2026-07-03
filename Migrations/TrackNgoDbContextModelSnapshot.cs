@@ -71,6 +71,34 @@ namespace TrackNGoMati.Migrations
                     b.ToTable("AuditTrailEntries");
                 });
 
+            modelBuilder.Entity("TrackNGoMati.Models.CitizenFeedback", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comments")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("DateSubmitted")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TrackingNumber")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CitizenFeedbacks");
+                });
+
             modelBuilder.Entity("TrackNGoMati.Models.Department", b =>
                 {
                     b.Property<int>("Id")
@@ -132,8 +160,7 @@ namespace TrackNGoMati.Migrations
 
                     b.Property<string>("SignatureImagePath")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("SignedAt")
                         .HasColumnType("datetime2");
@@ -161,6 +188,9 @@ namespace TrackNGoMati.Migrations
                     b.Property<int>("ArtaprocessingDays")
                         .HasColumnType("int")
                         .HasColumnName("ARTAProcessingDays");
+
+                    b.Property<int?>("AssignedToUserId")
+                        .HasColumnType("int");
 
                     b.Property<string>("AttachmentPath")
                         .HasMaxLength(500)
@@ -211,6 +241,9 @@ namespace TrackNGoMati.Migrations
                     b.Property<bool>("IsLocked")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsUrgent")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -219,9 +252,11 @@ namespace TrackNGoMati.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int?>("ParentDocumentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("QrcodePath")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("QRCodePath");
 
                     b.Property<string>("SubmittedBy")
@@ -248,7 +283,15 @@ namespace TrackNGoMati.Migrations
                     b.Property<int?>("TypeId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UrgencyJustification")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNumber")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("AssignedToUserId");
 
                     b.HasIndex(new[] { "CreatedByUserId" }, "IX_Documents_CreatedByUserId");
 
@@ -324,6 +367,9 @@ namespace TrackNGoMati.Migrations
                     b.Property<bool>("IsInternal")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("ParentCommentId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("PostedAt")
                         .HasColumnType("datetime2");
 
@@ -369,6 +415,9 @@ namespace TrackNGoMati.Migrations
                     b.Property<int>("DocumentId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ExtractedText")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Province")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -387,6 +436,41 @@ namespace TrackNGoMati.Migrations
                         .IsUnique();
 
                     b.ToTable("DocumentMetadatas");
+                });
+
+            modelBuilder.Entity("TrackNGoMati.Models.DocumentTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.ToTable("DocumentTemplates");
                 });
 
             modelBuilder.Entity("TrackNGoMati.Models.DocumentTypeConfig", b =>
@@ -551,8 +635,7 @@ namespace TrackNGoMati.Migrations
 
                     b.Property<string>("QrcodeImagePath")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("QRCodeImagePath");
 
                     b.Property<int>("ScanCount")
@@ -777,6 +860,9 @@ namespace TrackNGoMati.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("DelegatedUserId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Department")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -798,6 +884,9 @@ namespace TrackNGoMati.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsOutOfOffice")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastLoginAt")
@@ -974,6 +1063,11 @@ namespace TrackNGoMati.Migrations
 
             modelBuilder.Entity("TrackNGoMati.Models.Document", b =>
                 {
+                    b.HasOne("TrackNGoMati.Models.User", "AssignedToUser")
+                        .WithMany("DocumentsAssignedToUser")
+                        .HasForeignKey("AssignedToUserId")
+                        .HasConstraintName("FK_Documents_Users_AssignedToUserId");
+
                     b.HasOne("TrackNGoMati.Models.User", "CreatedByUser")
                         .WithMany("DocumentCreatedByUsers")
                         .HasForeignKey("CreatedByUserId")
@@ -986,13 +1080,14 @@ namespace TrackNGoMati.Migrations
 
                     b.HasOne("TrackNGoMati.Models.User", "SubmittedByUser")
                         .WithMany("DocumentSubmittedByUsers")
-                        .HasForeignKey("SubmittedByUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("SubmittedByUserId");
 
                     b.HasOne("TrackNGoMati.Models.DocumentTypeConfig", "Type")
                         .WithMany("Documents")
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("AssignedToUser");
 
                     b.Navigation("CreatedByUser");
 
@@ -1041,6 +1136,17 @@ namespace TrackNGoMati.Migrations
                         .IsRequired();
 
                     b.Navigation("Document");
+                });
+
+            modelBuilder.Entity("TrackNGoMati.Models.DocumentTemplate", b =>
+                {
+                    b.HasOne("TrackNGoMati.Models.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedByUser");
                 });
 
             modelBuilder.Entity("TrackNGoMati.Models.EscalationLog", b =>
@@ -1258,6 +1364,8 @@ namespace TrackNGoMati.Migrations
                     b.Navigation("DocumentCreatedByUsers");
 
                     b.Navigation("DocumentSubmittedByUsers");
+
+                    b.Navigation("DocumentsAssignedToUser");
 
                     b.Navigation("EscalationLogNotifiedUsers");
 

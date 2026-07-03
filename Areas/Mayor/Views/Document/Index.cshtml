@@ -20,6 +20,15 @@
         </div>
     </div>
     
+    <div style="padding: 0 16px; border-bottom: 1px solid var(--border); display: flex; gap: 24px;">
+        <a href="?filter=incoming" style="padding: 12px 4px; text-decoration: none; font-weight: 600; font-size: 14px; color: @(ViewBag.CurrentFilter == "incoming" ? "var(--brand)" : "var(--ink-muted)"); border-bottom: 2px solid @(ViewBag.CurrentFilter == "incoming" ? "var(--brand)" : "transparent");">
+            Incoming Approvals
+        </a>
+        <a href="?filter=outgoing" style="padding: 12px 4px; text-decoration: none; font-weight: 600; font-size: 14px; color: @(ViewBag.CurrentFilter == "outgoing" ? "var(--brand)" : "var(--ink-muted)"); border-bottom: 2px solid @(ViewBag.CurrentFilter == "outgoing" ? "var(--brand)" : "transparent");">
+            Outgoing Approvals
+        </a>
+    </div>
+    
     <!-- Filters Row -->
     <div class="filter-bar" style="padding: 12px 16px; margin-bottom: 0; display: flex; gap: 12px; align-items: center; background: #fafafa;">
         <select class="filter-select" id="bulkAction" style="min-width: 150px; background:#EFF6FF; color:#1D4ED8; border-color:#BFDBFE; display:none;"><option value="">Bulk Actions</option><option value="forward">Forward Selected</option><option value="archive">Archive Selected</option></select>
@@ -379,13 +388,13 @@
 </div>
 
 <script>
-    function showQrModal(trackingNumber, title) {
-        document.getElementById('qrDocTitle').textContent = title;
+    function openQrModal(trackingNumber, qrcodePath) {
         document.getElementById('qrDocRef').textContent = trackingNumber;
-        document.getElementById('qrImage').src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(trackingNumber);
-        
+        if (qrcodePath && qrcodePath.length > 0) {
+            document.getElementById('qrImage').src = qrcodePath;
+        } else {
+            document.getElementById('qrImage').src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(trackingNumber);
+        }
         openModal('qrModal');
     }
 </script>
-
-

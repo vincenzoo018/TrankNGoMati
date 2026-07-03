@@ -43,6 +43,8 @@
         </div>
         
         <span class="topbar-separator"></span>
+        <a href="/Profile" class="topbar-btn" title="Settings"><i data-lucide="settings"></i></a>
+        <a href="/Calendar" class="topbar-btn" title="Calendar Deadlines"><i data-lucide="calendar"></i></a>
         <a href="/Account/Logout" class="topbar-btn" title="Logout"><i data-lucide="log-out"></i></a>
     </header>
 
@@ -59,6 +61,7 @@
         <div class="sidebar-nav">
             <a href="/Mayor/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")"><i data-lucide="layout-dashboard"></i> Dashboard</a>
             <a href="/Mayor/Document" class="sidebar-nav-item @(currentPage == "Document" ? "active" : "")"><i data-lucide="file-check"></i> My Documents</a>
+            <a href="/Mayor/RoutingSlip" class="sidebar-nav-item @(currentPage == "RoutingSlip" ? "active" : "")"><i data-lucide="map"></i> Routing Slips</a>
             <a href="/Mayor/Signature" class="sidebar-nav-item @(currentPage == "Signature" ? "active" : "")"><i data-lucide="pen-tool"></i> Signatures</a>
             <a href="/Mayor/Archive" class="sidebar-nav-item @(currentPage == "Archive" ? "active" : "")"><i data-lucide="archive"></i> Archived</a>
         </div>
@@ -80,7 +83,9 @@
         }
 
         <div style="margin-top: auto; padding: 24px; padding-bottom: 32px;">
-            <a href="/Account/Logout" class="btn btn-secondary" style="width: 100%; border-color: var(--border); color: #EF4444; justify-content: center;">
+            <a href="/Profile" class="topbar-btn" title="Settings"><i data-lucide="settings"></i></a>
+        <a href="/Calendar" class="topbar-btn" title="Calendar Deadlines"><i data-lucide="calendar"></i></a>
+        <a href="/Account/Logout" class="btn btn-secondary" style="width: 100%; border-color: var(--border); color: #EF4444; justify-content: center;">
                 <i data-lucide="log-out"></i> Sign Out
             </a>
         </div>

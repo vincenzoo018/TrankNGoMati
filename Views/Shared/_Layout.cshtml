@@ -75,9 +75,19 @@
             <a href="/@currentArea/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")">
                 <i data-lucide="layout-dashboard"></i> Dashboard
             </a>
-            <a href="/Receiving/Document" class="sidebar-nav-item @(currentPage == "Document" ? "active" : "")">
+            
+            <a href="/@currentArea/Document?filter=incoming" class="sidebar-nav-item @(currentPage == "Document" && Context.Request.Query["filter"] == "incoming" ? "active" : "")">
+                <i data-lucide="inbox"></i> Incoming Documents
+            </a>
+            
+            <a href="/@currentArea/Document?filter=outgoing" class="sidebar-nav-item @(currentPage == "Document" && Context.Request.Query["filter"] == "outgoing" ? "active" : "")">
+                <i data-lucide="send"></i> Outgoing Documents
+            </a>
+            
+            <a href="/Receiving/Document" class="sidebar-nav-item @(currentPage == "Document" && Context.Request.Query["filter"] == "" ? "active" : "")">
                 <i data-lucide="file-text"></i> All Documents
             </a>
+            
             <a href="/DepartmentHead/Workflow" class="sidebar-nav-item @(currentPage == "Workflow" ? "active" : "")">
                 <i data-lucide="git-branch"></i> Workflow Routing
             </a>

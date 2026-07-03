@@ -514,3 +514,110 @@
 }
 
 
+
+
+
+<div class="modal" id="returnModal">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3 class="modal-title">Return Document</h3>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('returnModal')"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Remarks / Reason for Return</label>
+                <textarea id="returnRemarks" class="form-control" rows="3" placeholder="Explain why the document is being returned..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('returnModal')">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="submitFsmAction('RETURN', document.getElementById('returnRemarks').value)">Confirm Return</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="rejectModal">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3 class="modal-title">Reject Document</h3>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('rejectModal')"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Remarks / Reason for Rejection</label>
+                <textarea id="rejectRemarks" class="form-control" rows="3" placeholder="Explain why the document is being rejected..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('rejectModal')">Cancel</button>
+            <button type="button" class="btn" style="background:#EF4444; color:white;" onclick="submitFsmAction('REJECT', document.getElementById('rejectRemarks').value)">Confirm Reject</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="reassignModal">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3 class="modal-title">Reassign Document</h3>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('reassignModal')"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Target User ID</label>
+                <input type="number" id="reassignUserId" class="form-control" placeholder="Enter User ID to reassign to..." />
+            </div>
+            <div class="form-group">
+                <label>Remarks</label>
+                <textarea id="reassignRemarks" class="form-control" rows="2" placeholder="Optional remarks..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal('reassignModal')">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="submitFsmAction('REASSIGN', document.getElementById('reassignRemarks').value, document.getElementById('reassignUserId').value)">Confirm Reassign</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitFsmAction(action, remarks, targetUserId = null) {
+        const payload = {
+            TrackingNumber: '@Model.TrackingNumber',
+            Action: action,
+            Remarks: remarks,
+            TargetUserId: targetUserId ? parseInt(targetUserId) : null
+        };
+        
+        fetch(window.location.pathname.replace('/Details/', '/Transition'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert(data.message);
+            }
+        });
+    }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Highlight mentions
+        document.querySelectorAll('.comment-body').forEach(function(el) {
+            let text = el.innerHTML;
+            let highlighted = text.replace(/@@([a-zA-Z0-9_]+)/g, '<span style="color:#3B82F6; font-weight:600; background:#EFF6FF; padding:2px 6px; border-radius:4px;">@@$1</span>');
+            el.innerHTML = highlighted;
+        });
+    });
+
+    function showReplyForm(commentId) {
+        document.getElementById('reply-form-' + commentId).style.display = 'block';
+    }
+    
+    function hideReplyForm(commentId) {
+        document.getElementById('reply-form-' + commentId).style.display = 'none';
+    }
+</script>

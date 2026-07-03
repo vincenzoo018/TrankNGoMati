@@ -22,6 +22,8 @@ public partial class TrackNgoDbContext : DbContext
     public virtual DbSet<DigitalSignature> DigitalSignatures { get; set; }
 
     public virtual DbSet<Document> Documents { get; set; }
+    
+    public virtual DbSet<CitizenFeedback> CitizenFeedbacks { get; set; }
 
     public virtual DbSet<DocumentAttachment> DocumentAttachments { get; set; }
 
@@ -50,6 +52,8 @@ public partial class TrackNgoDbContext : DbContext
     public virtual DbSet<WorkflowStep> WorkflowSteps { get; set; }
 
     public virtual DbSet<WorkflowTransition> WorkflowTransitions { get; set; }
+
+    public virtual DbSet<DocumentTemplate> DocumentTemplates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -99,7 +103,7 @@ public partial class TrackNgoDbContext : DbContext
             entity.Property(e => e.ActionType).HasMaxLength(50);
             entity.Property(e => e.Remarks).HasMaxLength(500);
             entity.Property(e => e.SignatureHash).HasMaxLength(128);
-            entity.Property(e => e.SignatureImagePath).HasMaxLength(500);
+            entity.Property(e => e.SignatureImagePath).HasColumnType("nvarchar(max)");
 
             entity.HasOne(d => d.Document).WithMany(p => p.DigitalSignatures).HasForeignKey(d => d.DocumentId);
 
@@ -132,11 +136,16 @@ public partial class TrackNgoDbContext : DbContext
             entity.Property(e => e.EmailAddress).HasMaxLength(100);
             entity.Property(e => e.OriginatingDepartment).HasMaxLength(100);
             entity.Property(e => e.QrcodePath)
-                .HasMaxLength(500)
+                .HasColumnType("nvarchar(max)")
                 .HasColumnName("QRCodePath");
             entity.Property(e => e.SubmittedBy).HasMaxLength(100);
             entity.Property(e => e.Title).HasMaxLength(300);
             entity.Property(e => e.TrackingNumber).HasMaxLength(30);
+
+        entity.HasOne(d => d.AssignedToUser).WithMany(p => p.DocumentsAssignedToUser)
+                .HasForeignKey(d => d.AssignedToUserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Documents_Users_AssignedToUserId");
 
             entity.HasOne(d => d.CreatedByUser).WithMany(p => p.DocumentCreatedByUsers)
                 .HasForeignKey(d => d.CreatedByUserId)
@@ -148,7 +157,7 @@ public partial class TrackNgoDbContext : DbContext
 
             entity.HasOne(d => d.SubmittedByUser).WithMany(p => p.DocumentSubmittedByUsers)
                 .HasForeignKey(d => d.SubmittedByUserId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             entity.HasOne(d => d.Type).WithMany(p => p.Documents)
                 .HasForeignKey(d => d.TypeId)
@@ -190,6 +199,7 @@ public partial class TrackNgoDbContext : DbContext
             entity.Property(e => e.Province).HasMaxLength(100);
             entity.Property(e => e.ReportNumber).HasMaxLength(50);
             entity.Property(e => e.SourceLink).HasMaxLength(500);
+            entity.Property(e => e.ExtractedText).HasColumnType("nvarchar(max)");
 
             entity.HasOne(d => d.Document).WithOne(p => p.DocumentMetadata).HasForeignKey<DocumentMetadata>(d => d.DocumentId);
         });
@@ -246,7 +256,7 @@ public partial class TrackNgoDbContext : DbContext
             entity.HasIndex(e => e.TrackingNumber, "IX_QRCodeRecords_TrackingNumber").IsUnique();
 
             entity.Property(e => e.QrcodeImagePath)
-                .HasMaxLength(500)
+                .HasColumnType("nvarchar(max)")
                 .HasColumnName("QRCodeImagePath");
             entity.Property(e => e.TrackingNumber).HasMaxLength(20);
             entity.Property(e => e.TrackingUrl).HasMaxLength(500);
@@ -369,6 +379,18 @@ public partial class TrackNgoDbContext : DbContext
             entity.HasOne(d => d.PerformedByUser).WithMany(p => p.WorkflowTransitions)
                 .HasForeignKey(d => d.PerformedByUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+        });
+
+
+        modelBuilder.Entity<DocumentTemplate>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Title).HasMaxLength(255);
+            entity.Property(e => e.Category).HasMaxLength(100);
+            entity.HasOne(d => d.CreatedByUser)
+                  .WithMany()
+                  .HasForeignKey(d => d.CreatedByUserId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         OnModelCreatingPartial(modelBuilder);

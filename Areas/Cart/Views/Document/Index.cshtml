@@ -386,10 +386,11 @@
     function showQrModal(trackingNumber, title) {
         document.getElementById('qrDocTitle').textContent = title;
         document.getElementById('qrDocRef').textContent = trackingNumber;
-        document.getElementById('qrImage').src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(trackingNumber);
+        document.getElementById('qrImage').src = ''/Track/QrCode/' + trackingNumber;
         
         openModal('qrModal');
     }
 </script>
+
 
 

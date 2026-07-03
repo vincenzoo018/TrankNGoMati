@@ -513,3 +513,23 @@
     </script>
 }
 
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Highlight mentions
+        document.querySelectorAll('.comment-body').forEach(function(el) {
+            let text = el.innerHTML;
+            let highlighted = text.replace(/@@([a-zA-Z0-9_]+)/g, '<span style="color:#3B82F6; font-weight:600; background:#EFF6FF; padding:2px 6px; border-radius:4px;">@@$1</span>');
+            el.innerHTML = highlighted;
+        });
+    });
+
+    function showReplyForm(commentId) {
+        document.getElementById('reply-form-' + commentId).style.display = 'block';
+    }
+    
+    function hideReplyForm(commentId) {
+        document.getElementById('reply-form-' + commentId).style.display = 'none';
+    }
+</script>

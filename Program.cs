@@ -32,15 +32,12 @@ builder.Services.AddHttpContextAccessor();
 // Application services
 builder.Services.AddScoped<SmsService>();
 builder.Services.AddScoped<ExportService>();
+builder.Services.AddScoped<WorkflowEngine>();
+builder.Services.AddScoped<OcrService>();
+builder.Services.AddHostedService<ArtaEscalationService>();
 builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
-// OCR service — tessdata folder lives in wwwroot/tessdata
-builder.Services.AddSingleton(sp =>
-{
-    var env = sp.GetRequiredService<IWebHostEnvironment>();
-    var tessDataPath = Path.Combine(env.WebRootPath, "tessdata");
-    return new OcrService(tessDataPath);
-});
+
 
 var app = builder.Build();
 

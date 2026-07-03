@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace TrackNGoMati.Models;
@@ -22,6 +22,8 @@ public partial class Document
     public string SubmittedBy { get; set; } = null!;
 
     public int? SubmittedByUserId { get; set; }
+
+    public int? AssignedToUserId { get; set; }
 
     public string? ContactNumber { get; set; }
 
@@ -55,9 +57,19 @@ public partial class Document
 
     public int CreatedByUserId { get; set; }
 
+    public bool IsUrgent { get; set; }
+
+    public string? UrgencyJustification { get; set; }
+
+    public int? ParentDocumentId { get; set; }
+
+    public int VersionNumber { get; set; }
+
     public virtual ICollection<AuditTrailEntry> AuditTrailEntries { get; set; } = new List<AuditTrailEntry>();
 
     public virtual User CreatedByUser { get; set; } = null!;
+
+    public virtual User? AssignedToUser { get; set; }
 
     public virtual Department? Department { get; set; }
 

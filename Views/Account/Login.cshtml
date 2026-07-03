@@ -1,119 +1,474 @@
 @{
-    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
-    ViewData["Title"] = "Sign In";
+    Layout = null;
+    ViewData["Title"] = "Sign In - TrackNGo Mati";
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sign In — TrackNGo Mati</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root{
+    --mati-blue-deep:#0B2E63;
+    --mati-blue:#0F3D8C;
+    --mati-blue-bright:#1857C4;
+    --gov-gold:#F0B429;
+    --gov-gold-soft:#F6CD6B;
+    --coconut-green:#1E7145;
+    --paper:#FBF9F4;
+    --ink:#12233F;
+    --ink-soft:#5B6B85;
+    --line:#E4E1D8;
+    --danger:#C8383A;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Public Sans', sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .screen{
+    width:100%;
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:1.05fr 1fr;
+  }
+  @@media (max-width:880px){
+    .screen{grid-template-columns:1fr;}
+    .side{min-height:280px;}
+  }
 
-<div class="login-wrapper">
-    <!-- LEFT: Brand Panel -->
-    <div class="login-brand">
-        <div class="login-brand-logo">
-            <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
-                <rect width="60" height="60" rx="12" fill="white" fill-opacity="0.2"/>
-                <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle"
-                      font-family="Plus Jakarta Sans, sans-serif" font-size="32" font-weight="700" fill="white">T</text>
-            </svg>
-        </div>
-        <h1 class="login-brand-title">TrackNGo Mati</h1>
-        <p class="login-brand-tagline">
-            EODB-Compliant Smart Document Tracking &amp; Escalation System for the City Government of Mati
-        </p>
-        <div style="margin-top:40px; opacity:0.7; font-size:11px; text-align:center;">
-            <p>Office of the Mayor</p>
-            <p>City of Mati, Davao Oriental</p>
-        </div>
+  /* ---------- LEFT: Identity panel ---------- */
+  .side{
+    position:relative;
+    background:
+      radial-gradient(120% 90% at 15% 10%, var(--mati-blue-bright) 0%, var(--mati-blue) 38%, var(--mati-blue-deep) 100%);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:48px 52px;
+    color:#fff;
+  }
+
+  /* radiating sun rays, echoing the seal's gold star ring */
+  .rays{
+    position:absolute;
+    top:-30%;
+    left:-20%;
+    width:150%;
+    height:150%;
+    background:
+      repeating-conic-gradient(from 0deg at 30% 32%,
+        rgba(240,180,41,0.10) 0deg 4deg,
+        transparent 4deg 16deg);
+    opacity:0.55;
+    pointer-events:none;
+  }
+
+  /* Dahican wave motif — Mati's signature as the surfing capital of Mindanao */
+  .waves{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    height:190px;
+    pointer-events:none;
+  }
+  .waves svg{position:absolute; bottom:0; width:100%; height:100%;}
+
+  .side-top{position:relative; z-index:2;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--gov-gold-soft);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:34px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:22px; height:1px;
+    background:var(--gov-gold-soft);
+  }
+
+  .seal-wrap{
+    position:relative;
+    width:200px; height:200px;
+    margin-bottom:26px;
+    filter:drop-shadow(0 10px 24px rgba(0,0,0,0.35));
+  }
+  .seal-wrap::before{
+    content:"";
+    position:absolute;
+    inset:-14px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(240,180,41,0.35) 0%, rgba(240,180,41,0) 70%);
+  }
+  .seal-wrap img{
+    position:relative;
+    width:100%; height:100%;
+    display:block;
+  }
+
+  h1.brand{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:40px;
+    line-height:1.08;
+    letter-spacing:-0.01em;
+    margin-bottom:14px;
+  }
+  h1.brand span{color:var(--gov-gold-soft);}
+
+  .tagline{
+    font-size:15.5px;
+    line-height:1.6;
+    color:rgba(255,255,255,0.82);
+    max-width:380px;
+    margin-bottom:30px;
+  }
+
+  .feature-list{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:13px;
+    position:relative;
+    z-index:2;
+  }
+  .feature-list li{
+    display:flex;
+    align-items:flex-start;
+    gap:11px;
+    font-size:13.5px;
+    line-height:1.5;
+    color:rgba(255,255,255,0.86);
+  }
+  .feature-list li svg{
+    flex-shrink:0;
+    margin-top:2px;
+    color:var(--gov-gold-soft);
+    width:18px;
+    height:18px;
+  }
+
+  .side-bottom{
+    position:relative;
+    z-index:2;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-size:12.5px;
+    color:rgba(255,255,255,0.72);
+  }
+  .side-bottom .office b{display:block; color:#fff; font-size:13.5px; margin-bottom:2px;}
+  .secure-badge{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:12px;
+    color:rgba(255,255,255,0.85);
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.18);
+    padding:8px 13px;
+    border-radius:999px;
+  }
+  .secure-badge svg{color:var(--gov-gold-soft); flex-shrink:0; width:14px; height:14px;}
+
+  /* ---------- RIGHT: Form panel ---------- */
+  .form-side{
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:48px 40px;
+  }
+  .form-inner{width:100%; max-width:400px;}
+
+  .form-head{margin-bottom:30px;}
+  .form-head .kicker{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--coconut-green);
+    margin-bottom:10px;
+  }
+  .form-head h2{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:28px;
+    color:var(--ink);
+    margin-bottom:6px;
+  }
+  .form-head p{color:var(--ink-soft); font-size:14px;}
+
+  label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink);
+    margin-bottom:7px;
+  }
+  label .req{color:var(--danger);}
+
+  .field{margin-bottom:18px;}
+  .input-wrap{
+    position:relative;
+    display:flex;
+    align-items:center;
+  }
+  .input-wrap svg{
+    position:absolute;
+    left:14px;
+    width:16px; height:16px;
+    color:var(--ink-soft);
+    pointer-events:none;
+  }
+  input[type=text], input[type=password], input[type=email]{
+    width:100%;
+    padding:12px 14px 12px 40px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    font-size:14.5px;
+    font-family:'Public Sans', sans-serif;
+    color:var(--ink);
+    background:#FCFBF8;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  input::placeholder{color:#9AA5B8;}
+  input:focus{
+    outline:none;
+    border-color:var(--mati-blue-bright);
+    box-shadow:0 0 0 3px rgba(24,87,196,0.14);
+    background:#fff;
+  }
+  .toggle-eye{
+    position:absolute;
+    right:12px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    color:var(--ink-soft);
+    padding:4px;
+    display:flex;
+  }
+  .toggle-eye:focus-visible{outline:2px solid var(--mati-blue-bright); border-radius:4px;}
+
+  .row-between{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:24px;
+    font-size:13.5px;
+  }
+  .remember{display:flex; align-items:center; gap:8px; color:var(--ink-soft);}
+  .remember input{width:15px; height:15px; accent-color:var(--mati-blue-bright);}
+  .forgot{color:var(--mati-blue-bright); text-decoration:none; font-weight:600;}
+  .forgot:hover{text-decoration:underline;}
+
+  .btn-signin{
+    width:100%;
+    padding:13px;
+    background:var(--mati-blue-bright);
+    background-image:linear-gradient(180deg, var(--mati-blue-bright), var(--mati-blue));
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:700;
+    font-family:'Public Sans', sans-serif;
+    letter-spacing:0.01em;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    box-shadow:0 6px 16px rgba(15,61,140,0.28);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .btn-signin:hover{transform:translateY(-1px); box-shadow:0 8px 20px rgba(15,61,140,0.35);}
+  .btn-signin:focus-visible{outline:3px solid var(--gov-gold); outline-offset:2px;}
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:28px 0 18px;
+    color:#B7BFCC;
+    font-size:11.5px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+  }
+  .divider::before, .divider::after{content:""; flex:1; height:1px; background:var(--line);}
+
+  .demo-label{font-size:12.5px; color:var(--ink-soft); margin-bottom:10px;}
+  .demo-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:8px;
+    margin-bottom:16px;
+  }
+  .demo-chip{
+    padding:9px 6px;
+    border:1.3px solid var(--line);
+    border-radius:7px;
+    background:#FCFBF8;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--mati-blue);
+    text-align:center;
+    cursor:pointer;
+    transition:all .12s ease;
+  }
+  .demo-chip:hover{border-color:var(--mati-blue-bright); background:#EFF4FE; color:var(--mati-blue-bright);}
+
+  .footnote{
+    text-align:center;
+    font-size:11.5px;
+    color:#9AA5B8;
+    line-height:1.7;
+  }
+  .footnote b{color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<div class="screen">
+
+  <!-- LEFT: identity / brand panel -->
+  <div class="side">
+    <div class="rays"></div>
+
+    <div class="side-top">
+      <div class="eyebrow">Local Government of Mati · Davao Oriental</div>
+
+      <div class="seal-wrap">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Mati_Davao_Oriental_seal.png" alt="Mati Seal" style="filter: drop-shadow(0 0 10px rgba(0,0,0,0.2));">
+      </div>
+
+      <h1 class="brand">TrackNGo <span>Mati</span></h1>
+      <p class="tagline">EODB-compliant smart document tracking and escalation system for the City Government of Mati, built for RA 11032 compliance and citizen-facing transparency.</p>
+
+      <ul class="feature-list">
+        <li><i data-lucide="clock"></i> Real-time tracking of every document, office to office</li>
+        <li><i data-lucide="alert-triangle"></i> Automatic escalation when processing deadlines lapse</li>
+        <li><i data-lucide="users"></i> Role-based access for every city office and department</li>
+      </ul>
     </div>
 
-    <!-- RIGHT: Login Form -->
-    <div class="login-form-side">
-        <div class="login-card animate-fade-in">
-            <h2 class="login-card-title">Welcome Back</h2>
-            <p class="login-card-sub">Sign in to your TrackNGo account</p>
-
-            @if (TempData["LoginError"] != null)
-            {
-                <div style="background:#FEF2F2; border:1px solid var(--destructive); border-radius:4px; padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
-                    <i data-lucide="alert-circle" style="width:16px;height:16px;color:var(--destructive);flex-shrink:0;"></i>
-                    <span style="font-size:var(--fs-body); color:var(--destructive);">@TempData["LoginError"]</span>
-                </div>
-            }
-
-            <form action="/Account/Login" method="post">
-                <div class="form-group">
-                    <label class="form-label form-label-required">Email / Username</label>
-                    <div style="position:relative;">
-                        <i data-lucide="mail" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--ink-muted);"></i>
-                        <input type="text" class="form-control" name="username" id="login-username"
-                               placeholder="you@mati.gov.ph" required autocomplete="username"
-                               style="padding-left:34px;" />
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label form-label-required">Password</label>
-                    <div style="position:relative;">
-                        <i data-lucide="lock" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--ink-muted);"></i>
-                        <input type="password" class="form-control" name="password" id="login-password"
-                               placeholder="Enter your password" required autocomplete="current-password"
-                               style="padding-left:34px; padding-right:40px;" />
-                        <button type="button" onclick="togglePwd()" tabindex="-1"
-                                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0;">
-                            <i data-lucide="eye" id="pwd-icon" style="width:15px;height:15px;color:var(--ink-muted);"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-check">
-                        <input type="checkbox" name="remember" id="login-remember" />
-                        <span>Remember me</span>
-                    </label>
-                </div>
-
-                <button type="submit" class="btn btn-primary" id="login-submit"
-                        style="width:100%; justify-content:center; padding:10px;">
-                    <i data-lucide="log-in"></i> Sign In
-                </button>
-            </form>
-
-            <!-- Quick-Fill Demo Buttons -->
-            <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:16px;">
-                <p style="font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--ink-muted); font-weight:600; margin-bottom:8px;">
-                    Quick Demo Login
-                </p>
-                <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    <button onclick="fill('mayor@mati.gov.ph')"    class="btn btn-sm btn-secondary">Mayor</button>
-                    <button onclick="fill('admin@mati.gov.ph')"    class="btn btn-sm btn-secondary">Admin</button>
-                    <button onclick="fill('records@mati.gov.ph')"  class="btn btn-sm btn-secondary">Receiving</button>
-                    <button onclick="fill('hrmo.head@mati.gov.ph')" class="btn btn-sm btn-secondary">Dept Head</button>
-                    <button onclick="fill('cart@mati.gov.ph')"     class="btn btn-sm btn-secondary">CART</button>
-                </div>
-            </div>
-
-            <div style="margin-top:16px; text-align:center;">
-                <p class="text-meta">TrackNGo Mati v1.0 &middot; RA 11032 Compliant</p>
-                <p class="text-meta" style="margin-top: 4px;">Demo Password: <strong>password123</strong></p>
-            </div>
-        </div>
+    <div class="side-bottom">
+      <div class="office">
+        <b>Office of the Mayor</b>
+        City of Mati, Davao Oriental
+      </div>
+      <div class="secure-badge">
+        <i data-lucide="lock"></i> Secured government portal
+      </div>
     </div>
+    
+    <div class="waves">
+      <svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#0B2E63" fill-opacity="1" d="M0,256L48,229.3C96,203,192,149,288,154.7C384,160,480,219,576,218.7C672,219,768,160,864,133.3C960,107,1056,112,1152,133.3C1248,155,1344,192,1392,210.7L1440,229.3L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+      </svg>
+    </div>
+  </div>
+
+  <!-- RIGHT: Form panel -->
+  <div class="form-side">
+    <div class="form-inner">
+      <div class="form-head">
+        <div class="kicker">EMPLOYEE & OFFICE PORTAL</div>
+        <h2>Welcome back</h2>
+        <p>Sign in with your official Mati.gov.ph account to continue.</p>
+      </div>
+
+      @if (TempData["LoginError"] != null)
+      {
+          <div style="color: var(--danger); font-size: 13px; margin-bottom: 16px; background: #FEF2F2; padding: 10px; border-radius: 6px; border: 1px solid #FCA5A5;">
+              @TempData["LoginError"]
+          </div>
+      }
+
+      <form asp-action="Login" method="post">
+        <div class="field">
+          <label>Email or username <span class="req">*</span></label>
+          <div class="input-wrap">
+            <i data-lucide="mail"></i>
+            <input name="username" type="text" id="Email" placeholder="you@mati.gov.ph" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Password <span class="req">*</span></label>
+          <div class="input-wrap">
+            <i data-lucide="lock"></i>
+            <input name="password" type="password" id="passwordInput" placeholder="Enter your password" required />
+            <button type="button" class="toggle-eye" onclick="togglePassword()">
+              <i data-lucide="eye" id="eyeIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="row-between">
+          <label class="remember">
+            <input name="RememberMe" type="checkbox" />
+            Remember me
+          </label>
+          <a href="#" class="forgot">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-signin">Sign in <i data-lucide="arrow-right" style="width:18px; height:18px;"></i></button>
+      </form>
+
+      <div class="divider">QUICK DEMO ACCESS</div>
+      <div class="demo-label">Preview the portal as a sample role:</div>
+      <div class="demo-grid">
+        <div class="demo-chip" onclick="fillDemo('mayor@mati.gov.ph')">Mayor</div>
+        <div class="demo-chip" onclick="fillDemo('admin@mati.gov.ph')">Admin</div>
+        <div class="demo-chip" onclick="fillDemo('records@mati.gov.ph')">Receiving</div>
+        <div class="demo-chip" onclick="fillDemo('hrmo.head@mati.gov.ph')">Dept Head</div>
+        <div class="demo-chip" onclick="fillDemo('cart@mati.gov.ph')">CART</div>
+      </div>
+
+      <div class="footnote">
+        TrackNGo Mati v1.0 &middot; RA 11032 Compliant<br/>
+        Demo password: <b>password123</b>
+      </div>
+    </div>
+  </div>
+
 </div>
 
-@section Scripts {
-    <script>
-        function fill(email) {
-            document.getElementById('login-username').value = email;
-            document.getElementById('login-password').value = 'password123';
-        }
-        function togglePwd() {
-            var inp  = document.getElementById('login-password');
-            var icon = document.getElementById('pwd-icon');
-            if (inp.type === 'password') {
-                inp.type = 'text';
-                icon.setAttribute('data-lucide', 'eye-off');
-            } else {
-                inp.type = 'password';
-                icon.setAttribute('data-lucide', 'eye');
-            }
-            lucide.createIcons();
-        }
-    </script>
-}
+<script>
+  lucide.createIcons();
+
+  function togglePassword() {
+      const input = document.getElementById('passwordInput');
+      const icon = document.getElementById('eyeIcon');
+      if (input.type === 'password') {
+          input.type = 'text';
+          icon.setAttribute('data-lucide', 'eye-off');
+      } else {
+          input.type = 'password';
+          icon.setAttribute('data-lucide', 'eye');
+      }
+      lucide.createIcons();
+  }
+
+  function fillDemo(username) {
+      document.getElementById('Email').value = username;
+      document.getElementById('passwordInput').value = 'password123';
+  }
+</script>
+</body>
+</html>

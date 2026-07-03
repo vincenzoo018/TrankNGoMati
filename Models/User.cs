@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace TrackNGoMati.Models;
@@ -35,6 +35,10 @@ public partial class User
 
     public string? ExportPasswordHash { get; set; }
 
+    public bool IsOutOfOffice { get; set; }
+
+    public int? DelegatedUserId { get; set; }
+
     public virtual ICollection<AuditTrailEntry> AuditTrailEntries { get; set; } = new List<AuditTrailEntry>();
 
     public virtual Department? DepartmentNavigation { get; set; }
@@ -48,6 +52,8 @@ public partial class User
     public virtual ICollection<Document> DocumentCreatedByUsers { get; set; } = new List<Document>();
 
     public virtual ICollection<Document> DocumentSubmittedByUsers { get; set; } = new List<Document>();
+
+    public virtual ICollection<Document> DocumentsAssignedToUser { get; set; } = new List<Document>();
 
     public virtual ICollection<EscalationLog> EscalationLogNotifiedUsers { get; set; } = new List<EscalationLog>();
 

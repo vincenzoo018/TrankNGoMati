@@ -30,6 +30,7 @@ namespace TrackNGoMati.Areas.Receiving.Controllers
             ViewBag.CurrentPage  = "Document";
             ViewBag.DocTypes     = _context.DocumentTypeConfigs.OrderBy(t => t.TypeName).ToList();
             ViewBag.Departments  = _context.Departments.OrderBy(d => d.DepartmentName).ToList();
+            ViewBag.Templates    = _context.DocumentTemplates.OrderBy(t => t.Title).ToList();
 
             var query = _context.Documents.AsQueryable();
             if (!string.IsNullOrEmpty(search))
@@ -44,7 +45,7 @@ namespace TrackNGoMati.Areas.Receiving.Controllers
         [HttpPost]
         public IActionResult Register(string Title, int TypeId, int DepartmentId,
                                       string SubmittedBy, string ContactNumber, string? EmailAddress,
-                                      IFormFile? AttachedDocument)
+                                      IFormFile? AttachedDocument, bool IsUrgent = false, string? UrgencyJustification = null)
         {
             var dept        = _context.Departments.Find(DepartmentId);
             var type        = _context.DocumentTypeConfigs.Find(TypeId);

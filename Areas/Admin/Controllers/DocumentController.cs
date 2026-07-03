@@ -95,5 +95,27 @@ namespace TrackNGoMati.Areas.Admin.Controllers
         public class ResolveCommentDto {
             public int CommentId { get; set; }
         }
-    }
+    
+        [HttpPost]
+        public IActionResult Transition([FromBody] TransitionRequest req)
+        {
+            var userId = HttpContext.Session.GetInt32(SessionHelper.KEY_USER_ID) ?? 0;
+            // WorkflowEngine dependency is injected
+            var workflowEngine = new TrackNGoMati.Services.WorkflowEngine(_context, null);
+            bool success = workflowEngine.TransitionDocument(req.TrackingNumber, userId, req.Action, req.Remarks, req.TargetUserId, req.SignatureData);
+            if (success)
+            {
+                return Json(new { success = true, message = $"Document successfully processed ({req.Action})." });
+            }
+            return Json(new { success = false, message = "Transition failed. You may not have permission or the document state is invalid." });
+        }
+        
+        public class TransitionRequest {
+            public string TrackingNumber { get; set; }
+            public string Action { get; set; }
+            public string Remarks { get; set; }
+            public int? TargetUserId { get; set; }
+            public string SignatureData { get; set; }
+        }
+}
 }

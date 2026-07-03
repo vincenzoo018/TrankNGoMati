@@ -1,0 +1,75 @@
+@{
+    Layout = "_LayoutLogin";
+    ViewData["Title"] = "Citizen Feedback";
+}
+
+<div class="login-card" style="max-width: 500px; margin: 40px auto; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+    <div style="text-align:center; margin-bottom: 24px;">
+        <h2 style="color: var(--ink); margin-bottom: 8px;">Citizen Feedback</h2>
+        <p style="color: var(--ink-muted); font-size: 14px;">Help us improve our service by rating your experience.</p>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div style="background-color: #FEE2E2; color: #DC2626; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; text-align: center;">
+            <i data-lucide="alert-circle" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;"></i> @TempData["Error"]
+        </div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div style="background-color: #D1FAE5; color: #059669; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; text-align: center;">
+            <i data-lucide="check-circle" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;"></i> @TempData["Success"]
+        </div>
+    }
+    else
+    {
+        <form asp-action="Submit" method="post">
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label class="form-label form-label-required" style="display: block; font-weight: 600; margin-bottom: 8px;">Tracking Number (Ref No.)</label>
+                <input type="text" class="form-control" name="TrackingNumber" value="@ViewBag.TrackingNumber" required placeholder="e.g., TRK-12345" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #D1D5DB;" />
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label class="form-label form-label-required" style="display: block; font-weight: 600; margin-bottom: 8px;">Rate your experience (1 = Poor, 5 = Excellent)</label>
+                <div style="display: flex; gap: 12px; justify-content: space-between;">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <label style="flex: 1; text-align: center; cursor: pointer;">
+                            <input type="radio" name="Rating" value="@i" required style="display: none;" id="rating-@i" />
+                            <div class="rating-box" style="padding: 12px; border: 2px solid #E5E7EB; border-radius: 8px; font-size: 18px; font-weight: 600; color: #6B7280; transition: all 0.2s;">
+                                @i
+                            </div>
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">Comments or Suggestions (Optional)</label>
+                <textarea class="form-control" name="Comments" rows="4" placeholder="Tell us more about your experience..." style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #D1D5DB;"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 16px; font-weight: 600; border-radius: 6px; background-color: var(--brand); color: white; border: none; cursor: pointer;">
+                Submit Feedback
+            </button>
+        </form>
+    }
+</div>
+
+<style>
+    input[type="radio"]:checked + .rating-box {
+        border-color: var(--brand);
+        background-color: #EFF6FF;
+        color: var(--brand);
+    }
+    .rating-box:hover {
+        background-color: #F9FAFB;
+    }
+</style>
+
+<!-- Add Lucide icons to layout if not already there -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+    lucide.createIcons();
+</script>

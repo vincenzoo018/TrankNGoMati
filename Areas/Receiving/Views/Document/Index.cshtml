@@ -163,7 +163,22 @@
                     <label class="form-label" style="font-weight:600; font-size:12px; margin-bottom:4px;">Document File (PDF/Image)</label>
                     <input type="file" class="form-control" name="Attachment" id="auto-ocr-file" accept=".jpg,.jpeg,.png,.pdf" required style="padding: 8px;" />
                     
-                    <!-- OCR Loading & Preview Area -->
+                    
+                  <div class="form-row" style="margin-bottom: 16px;">
+                      <div class="form-group" style="flex:1;">
+                          <label class="form-label" style="display:flex; align-items:center; gap:8px;">
+                              <input type="checkbox" name="IsUrgent" id="isUrgent" value="true" onchange="document.getElementById('urgencyJustificationWrapper').style.display = this.checked ? 'block' : 'none';" />
+                              <span style="color:#EF4444; font-weight:600;"><i data-lucide="alert-triangle" style="width:14px; height:14px;"></i> Mark as Urgent / Rush (Halves ARTA SLA)</span>
+                          </label>
+                      </div>
+                  </div>
+                  <div class="form-row" id="urgencyJustificationWrapper" style="margin-bottom: 16px; display:none;">
+                      <div class="form-group" style="flex:1;">
+                          <label class="form-label">Urgency Justification</label>
+                          <textarea class="form-control" name="UrgencyJustification" rows="2" placeholder="Required if marked urgent..."></textarea>
+                      </div>
+                  </div>
+<!-- OCR Loading & Preview Area -->
                     <div id="ocr-loading" style="display:none; margin-top:12px; font-size:12px; color:var(--brand); align-items:center; gap:8px;">
                         <i data-lucide="loader" style="width:16px;height:16px;animation:spin 1s linear infinite;"></i> Running Automatic OCR Scan...
                     </div>
@@ -338,7 +353,13 @@
                 });
         }
 
-        function useOcrData() {
+        
+          function applyTemplate(selectElem) {
+              if (selectElem.value) {
+                  document.getElementById('reg-title').value = selectElem.value;
+              }
+          }
+function useOcrData() {
             closeModal('ocrModal');
             openModal('registerModal');
             if (_ocrFields.Subject)
@@ -360,7 +381,22 @@
                     <label class="form-label" style="font-weight:600; font-size:12px; margin-bottom:4px;">Document File (PDF/Image)</label>
                     <input type="file" class="form-control" name="Attachment" id="auto-ocr-file" accept=".jpg,.jpeg,.png,.pdf" required style="padding: 8px;" />
                     
-                    <!-- OCR Loading & Preview Area -->
+                    
+                  <div class="form-row" style="margin-bottom: 16px;">
+                      <div class="form-group" style="flex:1;">
+                          <label class="form-label" style="display:flex; align-items:center; gap:8px;">
+                              <input type="checkbox" name="IsUrgent" id="isUrgent" value="true" onchange="document.getElementById('urgencyJustificationWrapper').style.display = this.checked ? 'block' : 'none';" />
+                              <span style="color:#EF4444; font-weight:600;"><i data-lucide="alert-triangle" style="width:14px; height:14px;"></i> Mark as Urgent / Rush (Halves ARTA SLA)</span>
+                          </label>
+                      </div>
+                  </div>
+                  <div class="form-row" id="urgencyJustificationWrapper" style="margin-bottom: 16px; display:none;">
+                      <div class="form-group" style="flex:1;">
+                          <label class="form-label">Urgency Justification</label>
+                          <textarea class="form-control" name="UrgencyJustification" rows="2" placeholder="Required if marked urgent..."></textarea>
+                      </div>
+                  </div>
+<!-- OCR Loading & Preview Area -->
                     <div id="ocr-loading" style="display:none; margin-top:12px; font-size:12px; color:var(--brand); align-items:center; gap:8px;">
                         <i data-lucide="loader" style="width:16px;height:16px;animation:spin 1s linear infinite;"></i> Running Automatic OCR Scan...
                     </div>

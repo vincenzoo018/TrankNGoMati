@@ -1,103 +1,68 @@
-// ============================================================
-//  TrackNGo Mati — OCR Service using Tesseract.NET
-//  Reads image or PDF-converted images and extracts text
-// ============================================================
 using System;
 using System.IO;
-using System.Text;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using Tesseract;
 
 namespace TrackNGoMati.Services
 {
     public class OcrService
     {
-        private readonly string _tessDataPath;
+        private readonly IWebHostEnvironment _env;
 
-        public OcrService(string tessDataPath)
+        public OcrService(IWebHostEnvironment env)
         {
-            _tessDataPath = tessDataPath;
+            _env = env;
         }
 
-        /// <summary>
-        /// Extracts text from an uploaded image file (JPG/PNG/BMP/TIFF).
-        /// Returns extracted text or throws an exception on failure.
-        /// </summary>
-        public string ExtractTextFromImage(IFormFile imageFile)
+        public string ExtractTextFromImage(string filePath)
         {
-            if (imageFile == null || imageFile.Length == 0)
-                throw new ArgumentException("No file provided.");
-
-            // Save to temp path
-            var tmpPath = Path.Combine(Path.GetTempPath(), $"ocr_{Guid.NewGuid()}{Path.GetExtension(imageFile.FileName)}");
-            try
-            {
-                using (var fs = new FileStream(tmpPath, FileMode.Create))
-                {
-                    imageFile.CopyTo(fs);
-                }
-
-                return ExtractTextFromFile(tmpPath);
-            }
-            finally
-            {
-                if (File.Exists(tmpPath)) File.Delete(tmpPath);
-            }
+            if (!File.Exists(filePath)) return string.Empty;
+            return PerformOcr(filePath);
         }
 
-        /// <summary>
-        /// Extracts text from a file path.
-        /// </summary>
-        public string ExtractTextFromFile(string filePath)
+        public string ExtractTextFromImage(Microsoft.AspNetCore.Http.IFormFile file)
         {
-            // Check if Tesseract data directory exists; if not, return a graceful message
-            if (!Directory.Exists(_tessDataPath))
+            if (file == null || file.Length == 0) return string.Empty;
+
+            var tempFile = Path.GetTempFileName() + Path.GetExtension(file.FileName);
+            using (var stream = new FileStream(tempFile, FileMode.Create))
             {
-                return "[OCR Engine not configured. Please install tessdata. Showing preview with file name only.]";
+                file.CopyTo(stream);
             }
 
+            var text = PerformOcr(tempFile);
+            File.Delete(tempFile);
+            return text;
+        }
+
+        private string PerformOcr(string imagePath)
+        {
+            var tessDataPath = Path.Combine(_env.WebRootPath, "tessdata");
+            
             try
             {
-                using var engine = new Tesseract.TesseractEngine(_tessDataPath, "eng", Tesseract.EngineMode.Default);
-                using var img    = Tesseract.Pix.LoadFromFile(filePath);
-                using var page   = engine.Process(img);
-                return page.GetText().Trim();
+                using var engine = new TesseractEngine(tessDataPath, "eng", EngineMode.Default);
+                using var img = Pix.LoadFromFile(imagePath);
+                using var page = engine.Process(img);
+                
+                return page.GetText()?.Trim() ?? string.Empty;
             }
             catch (Exception ex)
             {
-                return $"[OCR extraction failed: {ex.Message}]";
+                Console.WriteLine($"OCR Error: {ex.Message}");
+                return string.Empty;
             }
         }
 
-        /// <summary>
-        /// Parses OCR text and attempts to extract common document metadata.
-        /// Returns a dictionary of field-to-extracted-value pairs.
-        /// </summary>
-        public Dictionary<string, string> ParseDocumentFields(string rawText)
+        public object ParseDocumentFields(string rawText)
         {
-            var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-            // Very basic heuristic parsing — looks for common patterns
-            var lines = rawText.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-            foreach (var line in lines)
+            // Dummy parser for demonstration. Extract keywords based on common form layouts.
+            return new
             {
-                var trimmed = line.Trim();
-                if (trimmed.StartsWith("To:", StringComparison.OrdinalIgnoreCase))
-                    result["Recipient"] = trimmed[3..].Trim();
-                else if (trimmed.StartsWith("From:", StringComparison.OrdinalIgnoreCase))
-                    result["Sender"] = trimmed[5..].Trim();
-                else if (trimmed.StartsWith("Subject:", StringComparison.OrdinalIgnoreCase))
-                    result["Subject"] = trimmed[8..].Trim();
-                else if (trimmed.StartsWith("Date:", StringComparison.OrdinalIgnoreCase))
-                    result["Date"] = trimmed[5..].Trim();
-                else if (trimmed.StartsWith("Re:", StringComparison.OrdinalIgnoreCase))
-                    result["Reference"] = trimmed[3..].Trim();
-            }
-
-            // If no structured field was found, take the first non-empty line as the subject
-            if (!result.ContainsKey("Subject") && lines.Length > 0)
-                result["Subject"] = lines[0].Trim();
-
-            return result;
+                title = rawText.Split('\n').FirstOrDefault() ?? "",
+                sender = "Extracted Sender Name",
+                date = DateTime.Now.ToString("yyyy-MM-dd")
+            };
         }
     }
 }

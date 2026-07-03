@@ -43,6 +43,8 @@
         </div>
         
         <span class="topbar-separator"></span>
+        <a href="/Profile" class="topbar-btn" title="Settings"><i data-lucide="settings"></i></a>
+        <a href="/Calendar" class="topbar-btn" title="Calendar Deadlines"><i data-lucide="calendar"></i></a>
         <a href="/Account/Logout" class="topbar-btn" title="Logout"><i data-lucide="log-out"></i></a>
     </header>
 
@@ -57,8 +59,13 @@
         <div class="sidebar-role" id="current-role-label">Executive Admin</div>
         
         <div class="sidebar-nav">
-            <a href="/Admin/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+            <a href="/Admin/Templates" class="sidebar-link">
+            <i data-lucide="file-text"></i>
+            <span>Document Templates</span>
+        </a>
+        <a href="/Admin/Dashboard" class="sidebar-nav-item @(currentPage == "Dashboard" ? "active" : "")"><i data-lucide="layout-dashboard"></i> Dashboard</a>
             <a href="/Admin/Document" class="sidebar-nav-item @(currentPage == "Document" ? "active" : "")"><i data-lucide="file-text"></i> My Documents</a>
+            <a href="/Admin/RoutingSlip" class="sidebar-nav-item @(currentPage == "RoutingSlip" ? "active" : "")"><i data-lucide="map"></i> Routing Slips</a>
             <a href="/Admin/AuditTrail" class="sidebar-nav-item @(currentPage == "AuditTrail" ? "active" : "")"><i data-lucide="activity"></i> Audit Trail</a>
             <a href="/Admin/Reports" class="sidebar-nav-item @(currentPage == "Reports" ? "active" : "")"><i data-lucide="file-bar-chart"></i> Reports</a>
             <a href="/Admin/UserManagement" class="sidebar-nav-item @(currentPage == "Users" ? "active" : "")"><i data-lucide="users"></i> User Management</a>
@@ -82,7 +89,9 @@
         }
 
         <div style="margin-top: auto; padding: 24px; padding-bottom: 32px;">
-            <a href="/Account/Logout" class="btn btn-secondary" style="width: 100%; border-color: var(--border); color: #EF4444; justify-content: center;">
+            <a href="/Profile" class="topbar-btn" title="Settings"><i data-lucide="settings"></i></a>
+        <a href="/Calendar" class="topbar-btn" title="Calendar Deadlines"><i data-lucide="calendar"></i></a>
+        <a href="/Account/Logout" class="btn btn-secondary" style="width: 100%; border-color: var(--border); color: #EF4444; justify-content: center;">
                 <i data-lucide="log-out"></i> Sign Out
             </a>
         </div>

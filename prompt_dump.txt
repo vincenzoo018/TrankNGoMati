@@ -1,0 +1,133 @@
+<USER_REQUEST>
+# TrackNGo — Government Document Tracking System (DTS)
+## Build Prompt v2 — Aligned to Study Objectives (Office of the Mayor, City of Mati)
+
+This version cross-references every feature against the thesis's General and Specific Objectives (1.3.1 / 1.3.2.1–1.3.2.9), so the system you build matches what the paper claims. Items are tagged **[Obj X.X.X.X]** where they fulfill a stated objective, and **[Gap]** where the current build (per screenshots) doesn't yet reflect what's promised in the paper.
+
+---
+
+## 1. Objective Coverage Check
+
+| Objective | Feature | Status per screenshots |
+|---|---|---|
+| 1.3.2.1 | Centralized document management module | ✅ Built — Document Details page exists |
+| 1.3.2.2 | FSM-based workflow lifecycle | ⚠️ Partial — 5-stage stepper exists visually but must be explicitly implemented as a true FSM (defined states + allowed transitions), not just a UI progress bar |
+| 1.3.2.3 | QR code tracking | ❌ Gap — no QR code visible anywhere in current UI |
+| 1.3.2.4 | SMS alert system | ❌ Gap — only a generic in-app bell icon exists, no SMS gateway |
+| 1.3.2.5 | Digital signature | ❌ Gap — no signature capture at "Approved" stage |
+| 1.3.2.6 | Smart Escalation (ARTA 3/7/20-day) | ❌ Gap — "Expected Due Date (SLA)" field exists but has no escalation logic or ARTA-specific thresholds |
+| 1.3.2.7 | Password-Gated Document Export | ❌ Gap — current "Export" button has no secondary password prompt |
+| 1.3.2.8 | OCR engine | ❌ Gap — no OCR/metadata extraction visible |
+| 1.3.2.9 | Performance/security/usability evaluation | N/A — this is a testing/evaluation chapter, not a feature to build |
+
+**Recommendation:** Since your paper commits to all 9 objectives, treat items marked ❌ Gap as non-negotiable for defense — a panel will very likely ask to see QR, SMS, OCR, e-signature, and the ARTA escalation logic actually working, since they're named explicitly in your Specific Objectives.
+
+---
+
+## 2. Fix / Complete Existing Document Details Page
+
+- [ ] Implement file attachment upload and preview (PDF/image) — currently shows "No document attachment available." *(Foundation for 1.3.2.8 OCR — OCR needs an actual scanned file to process.)*
+- [ ] **[Obj 1.3.2.6]** Replace the generic SLA field with true **Smart Escalation** logic: classify each document against ARTA's 3-day (simple), 7-day (complex), or 20-day (highly technical) processing periods. Show a color-coded badge (green/yellow/red) and countdown, and auto-alert designated oversight personnel in real time when a threshold is breached.
+- [ ] Populate Audit Trail with real, immutable tracking history entries — currently shows "No tracking history yet" despite being at stage 2 (Endorsed).
+- [ ] Add routing actions beyond "Forward to Dept Head": **Return for Revision**, **Reject**, **Reassign**. Each transition must be a valid state change within the FSM defined for 1.3.2.2.
+- [ ] Add a named **Assignee** field under "Current Holder" (currently shows only department, not the individual responsible) — needed for escalation alerts to reach the right person.
+- [ ] **[Obj 1.3.2.5]** Add digital e-signature capture at the "Approved" stage, restricted to authorized personnel (Mayor, City Administrator, designated supervisors), with secure signature verification.
+- [ ] Add comment threading with @mentions and resolved/unresolved status (builds on existing "Add Anchored Comment").
+- [ ] Add version history with a visual diff/changelog (ties into existing "Linked Document/Version" field).
+- [ ] Add an urgency/rush flag separate from "Classification: NORMAL," with a required justification field when set — this should also affect which ARTA tier (3/7/20-day) the Smart Escalation module applies.
+- [ ] Generate a print-ready physical routing slip for hybrid paper/digital offices.
+- [ ] **[Obj 1.3.2.7]** Replace the generic "Export" button with a **Password-Gated Export**: require a secondary password (distinct from login credentials) before any document data can be extracted, and log every export attempt (success or failure) to the audit trail.
+
+---
+
+## 3. New Sidebar Modules
+
+| Module | Purpose | Linked Objective |
+|---|---|---|
+| **Incoming Documents** | Documents received by this office from others. | Supports 1.3.2.1 |
+| **Outgoing Documents** | Documents this office has sent out (split from single "My Documents" list). | Supports 1.3.2.1 |
+| **QR Tracking** | Generate/scan a QR code per document for staff and clients to verify status, location, and processing phase. | **1.3.2.3** |
+| **SMS Alerts Center** | Configure and log SMS notifications for status updates, feedback requests, approvals, and release announcements. | **1.3.2.4** |
+| **OCR / Smart Intake** | Auto-extract text and metadata from scanned/uploaded documents for searchability. | **1.3.2.8** |
+| **Escalation Monitor** | Dashboard of all documents nearing/exceeding ARTA 3/7/20-day thresholds, with real-time alerts to oversight personnel. | **1.3.2.6** |
+| **Digital Signatures** | Manage authorized signatories and their e-signature credentials. | **1.3.2.5** |
+| **Reports / Analytics** | Turnaround time per office, SLA/ARTA compliance %, bottleneck/volume reports. | Supports 1.3.2.9 evaluation |
+| **Notifications / Alerts** | In-app alerts for overdue documents, new endorsements (complements SMS Alerts Center). | Supports 1.3.2.4 |
+| **User & Office Management** | Manage departments, personnel, roles, permissions (admin-only). | Supports RBAC requirement |
+| **Document Templates / Forms** | Pre-filled common forms (memos, EOs, requests). | Supports 1.3.2.1 |
+| **Calendar / Deadlines View** | Calendar of all SLA/ARTA due dates across active documents. | Supports 1.3.2.6 |
+| **Public Tracking Portal** | Citizen-facing page: enter tracking number, see status only. | Supports transparency goal in 1.3.1 |
+| **Feedback / Complaints Module** | ARTA-aligned citizen feedback on turnaround and delays. | Supports 1.3.1 accountability goal |
+| **Compliance Export** | Tamper-evident, audit-ready log export for COA review, gated by 1.3.2.7's password requirement. | **1.3.2.7** |
+| **Settings / Profile** | User preferences, notifications, password/account management. | Supports usability (1.3.2.9) |
+
+---
+
+## 4. Suggested Build Priority (Revised for Defense Readiness)
+
+**Phase 1 — Core FSM & Document Handling (fulfills 1.3.2.1, 1.3.2.2):**
+1. File attachment upload/preview
+2. True FSM implementation behind the stepper (defined states + transitions)
+3. Return/Reject/Reassign actions
+4. Named assignee field
+5. Real audit trail logging (append-only)
+
+**Phase 2 — The Four "Signature" Objectives (fulfills 1.3.2.3–1.3.2.6):**
+6. QR code generation + scan lookup
+7. SMS Gateway integration + Notifications module
+8. Digital e-signature capture
+9. Smart Escalation engine with ARTA 3/7/20-day logic + real-time oversight alerts
+
+**Phase 3 — Security & Intelligence (fulfills 1.3.2.7, 1.3.2.8):**
+10. Password-Gated Export
+11. OCR engine + auto-metadata generation
+
+**Phase 4 — Transparency & Compliance Layer (supports 1.3.1 goals):**
+12. Incoming/Outgoing document split
+13. Public Tracking Portal
+14. Feedback/Complaints module
+15. Compliance Export
+16. Reports/Analytics
+
+**Phase 5 — Polish (usability, supports 1.3.2.9 evaluation):**
+17. Settings/Profile
+18. Calendar/Deadlines view
+19. Document templates
+20. Version diffing
+21. Comment threading with @mentions
+22. Delegate/out-of-office routing
+23. Print-ready routing slip
+
+---
+
+## 5. Technical Notes for the Developer/AI
+
+- **FSM design (1.3.2.2):** Explicitly define states (e.g., Submitted, Endorsed, Accepted, Reviewed, Approved, Returned, Rejected, Released) and a transition table of which roles can move a document between which states. This should be documented separately as your FSM diagram for the methodology chapter.
+- **ARTA thresholds (1.3.2.6):** Confirm with your adviser which document types map to the 3-day (simple), 7-day (complex), and 20-day (highly technical) tiers per the Anti-Red Tape Act/RA 11032 — this classification should be a required field at document creation, not inferred automatically, unless OCR/metadata is trained to do so reliably.
+- **SMS Gateway (1.3.2.4):** Decide early on a provider (e.g., Semaphore, Globe Labs, ITexMo) since integration and cost differ — this affects both your budget/limitations section and your system architecture diagram.
+- **OCR engine (1.3.2.8):** Tesseract OCR or Azure/Google Cloud Vision are common choices for ASP.NET projects; note that cloud OCR APIs may raise a data-privacy consideration worth addressing in your Scope & Limitations, since scanned documents may contain sensitive citizen information.
+- **Password-Gated Export (1.3.2.7):** The secondary password should not be the same as the user's login password — treat it as a distinct "export PIN" with its own hashing/storage, and log every attempt.
+- Audit Trail entries must be immutable/append-only to satisfy COA record-keeping standards.
+- SLA/ARTA countdown calculations should exclude weekends and Philippine holidays.
+- Public Tracking Portal must NOT expose internal comments, attachments, or assignee names — status and tracking number only.
+- Role-based access control (RBAC) is required before enabling User & Office Management.
+
+---
+
+*This version supersedes the earlier general build prompt. Use Section 1 (Objective Coverage Check) as your working checklist when preparing for your proposal/final defense — every ❌ Gap item is something a panel is likely to ask about directly, since it's named in your Specific Objectives.*
+
+
+
+
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-07-03T02:48:14+08:00.
+
+The user's current state is as follows:
+Other open documents:
+- c:\Users\Huawei\source\repos\TrankNGoMati\Models\DocumentComment.cs (LANGUAGE_CSHARP)
+- c:\Users\Huawei\source\repos\TrankNGoMati\Areas\DepartmentHead\Controllers\SignatureController.cs (LANGUAGE_CSHARP)
+- c:\Users\Huawei\source\repos\TrankNGoMati\Areas\Admin\Controllers\ReportsController.cs (LANGUAGE_CSHARP)
+- c:\Users\Huawei\source\repos\TrankNGoMati\Areas\Cart\Views\AuditTrail\Index.cshtml (LANGUAGE_UNSPECIFIED)
+- c:\Users\Huawei\source\repos\TrankNGoMati\Areas\Receiving\Controllers\AuditTrailController.cs (LANGUAGE_CSHARP)
+</ADDITIONAL_METADATA>

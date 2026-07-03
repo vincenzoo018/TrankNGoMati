@@ -25,6 +25,8 @@ public partial class DocumentComment
 
     public bool Resolved { get; set; }
 
+    public int? ParentCommentId { get; set; }
+
     public virtual Document Document { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
